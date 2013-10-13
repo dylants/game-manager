@@ -1,0 +1,16 @@
+h1 {
+    text-align: center;
+}
+
+.game-over {
+    font-style: italic;
+    font-weight: 300;
+}
+
+.blacked-out {
+    background-color: rgb(255, 236, 236);
+}
+
+.not-blacked-out {
+    background-color: rgb(244, 255, 245);
+}
