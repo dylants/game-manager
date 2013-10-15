@@ -16,7 +16,17 @@ define([
             "*invalidRoute": "badRoute"
         },
 
+        initialize: function() {
+            this.on("route", this.routeCalled, this);
+        },
+
+        routeCalled: function() {
+            // scroll to the top of the window on every route call
+            window.scrollTo(0, 0);
+        },
+
         landing: function() {
+            // by default, send them to the schedule page
             this.navigate("schedule", {
                 trigger: true
             });

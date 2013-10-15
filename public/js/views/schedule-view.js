@@ -22,7 +22,9 @@ define([
         },
 
         close: function() {
-
+            // release all event listeners
+            this.stopListening();
+            this.$el.off("click");
         },
 
         render: function() {
