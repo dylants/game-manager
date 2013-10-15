@@ -5,15 +5,15 @@ define([
     "jquery",
     "game-view",
     "game-model",
-    "text!/assets/templates/games.html"
-], function(Backbone, _, $, GameView, GameModel, gamesHtml) {
+    "text!/assets/templates/schedule.html"
+], function(Backbone, _, $, GameView, GameModel, scheduleHtml) {
     "use strict";
 
     return Backbone.View.extend({
 
         el: "#main",
 
-        template: _.template(gamesHtml),
+        template: _.template(scheduleHtml),
 
         events: {},
 
@@ -26,7 +26,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template());
+            this.$el.html(this.template({ "team": this.collection.getTeamName() }));
             return this;
         },
 

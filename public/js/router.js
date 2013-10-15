@@ -2,16 +2,18 @@
 define([
     "backbone",
     "jquery",
-    "game-collection",
-    "games-view"
-], function(Backbone, $, GameCollection, GamesView) {
+    "schedule-collection",
+    "schedule-view"
+], function(Backbone, $, ScheduleCollection, ScheduleView) {
     "use strict";
+
+    var scheduleCollection, scheduleView;
 
     var Router = Backbone.Router.extend({
         routes: {
             "": "landing",
             "schedule": "schedule",
-            "*otherRoute": "badRoute"
+            "*invalidRoute": "badRoute"
         },
 
         landing: function() {
@@ -20,22 +22,22 @@ define([
             });
         },
 
-        schedule: function() {
-            var gameCollection, gamesView;
-
-            if (gamesView) {
-                gamesView.close();
+        schedule: function(queryParams) {
+            if (scheduleView) {
+                scheduleView.close();
             }
 
-            gameCollection = new GameCollection();
-            gamesView = new GamesView({
-                collection: gameCollection
+            scheduleCollection = new ScheduleCollection([], queryParams);
+            scheduleView = new ScheduleView({
+                collection: scheduleCollection
             });
-            gamesView.render();
+            scheduleView.render();
         },
 
-        badRoute: function(otherRoute) {
-            console.error("bad route: " + otherRoute);
+        badRoute: function(invalidRoute) {
+            console.error("bad route: " + invalidRoute);
+            console.error("redirecting to /");
+            location.href = "/";
         }
     });
 

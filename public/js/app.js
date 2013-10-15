@@ -2,7 +2,9 @@
 define([
     "jquery",
     "backbone",
-    "router"
+    "router",
+    // our app requires backbone query params
+    "backbone.queryparams",
 ], function($, Backbone, Router) {
     "use-strict";
 
