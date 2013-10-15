@@ -31,15 +31,23 @@ define([
         },
 
         renderGames: function() {
-            var gamesSelector = $("#games");
+            var pastGamesSelector, futureGamesSelector;
+
+            pastGamesSelector = $("#past-games");
+            futureGamesSelector = $("#future-games");
 
             // clear the existing games
-            gamesSelector.empty();
+            pastGamesSelector.empty();
+            futureGamesSelector.empty();
             this.collection.each(function(game) {
                 var gameView = new GameView({
                     model: game
                 });
-                gamesSelector.append(gameView.render().el);
+                if (game.toJSON().isGameOver) {
+                    pastGamesSelector.append(gameView.render().el);
+                } else {
+                    futureGamesSelector.append(gameView.render().el);
+                }
             });
 
             return this;
