@@ -8,7 +8,9 @@ module.exports = function(grunt) {
             ],
             options: {
                 ignores: [
-                    "node_modules/**"
+                    "node_modules/**",
+                    "public/css/**",
+                    "public/js/lib/**"
                 ]
             }
         }

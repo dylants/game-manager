@@ -25,6 +25,7 @@ define([
         },
 
         getTeamName: function() {
+            // capitalize the first letter of the team name
             return this.team.charAt(0).toUpperCase() + this.team.slice(1);
         }
 

@@ -8,7 +8,7 @@ define([
 
     return Backbone.View.extend({
 
-        className: "game well",
+        className: "game",
 
         template: _.template(gameHtml),
 

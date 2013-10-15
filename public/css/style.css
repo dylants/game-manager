@@ -5,13 +5,15 @@ h1 {
     text-align: center;
 }
 .game {
+    padding: 1em;
+    border: 1px solid rgb(200, 200, 200);
 }
 .game-over {
     font-style: italic;
     font-weight: 300;
 }
 .blacked-out {
-    background-color: rgb(255, 236, 236);
+    background-color: rgb(225, 225, 225);
 }
 .not-blacked-out {
 }
