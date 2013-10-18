@@ -1,22 +1,26 @@
 body {
     background-color: rgb(245, 245, 245);
+    background-image: url("/assets/img/sandpaper.png");
 }
-h1 {
+h1, h2 {
     text-align: center;
 }
 .game {
     padding: 1em;
     border: 1px solid rgb(200, 200, 200);
+    background-color: rgb(255, 255, 255);
+    cursor: default;
+}
+.game:hover {
+    background-color: rgb(235, 234, 230);
 }
 .game-over {
     font-style: italic;
     font-weight: 300;
 }
-.blacked-out {
-    background-color: rgb(225, 225, 225);
-}
-.not-blacked-out {
-}
 .game-element {
     padding: 0 1em;
+}
+.original-time {
+    font-weight: 100;
 }

@@ -5,6 +5,8 @@ define([
     "router",
     // our app requires backbone query params
     "backbone.queryparams",
+    // our app requires moment
+    "moment"
 ], function($, Backbone, Router) {
     "use-strict";
 

@@ -5,6 +5,7 @@ require.config({
         "backbone.queryparams": "/assets/js/lib/backbone.queryparams",
         "jquery": "/assets/js/lib/jquery-2.0.3.min",
         "text": "/assets/js/lib/text",
+        "moment": "/assets/js/lib/moment.min",
         "schedule-collection": "/assets/js/models/schedule-collection",
         "schedule-view": "/assets/js/views/schedule-view",
         "game-model": "/assets/js/models/game-model",

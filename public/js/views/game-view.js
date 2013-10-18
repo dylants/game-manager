@@ -8,8 +8,6 @@ define([
 
     return Backbone.View.extend({
 
-        className: "game",
-
         template: _.template(gameHtml),
 
         events: {},
@@ -20,20 +18,7 @@ define([
         },
 
         render: function() {
-            var game;
-
-            
-            game = this.model.toJSON();
-            this.$el.html(this.template(game));
-
-            if (game.isGameOver) {
-                $(this.el).addClass("game-over");
-            }
-            if (game.isBlackedOut) {
-                $(this.el).addClass("blacked-out");
-            } else {
-                $(this.el).addClass("not-blacked-out");
-            }
+            this.$el.html(this.template(this.model.toJSON()));
 
             return this;
         }
