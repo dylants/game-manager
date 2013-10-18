@@ -1,6 +1,4 @@
-var moment = require("moment"),
-    mongoose = require("mongoose"),
-    NHLGame = mongoose.model("NHLGame");
+var moment = require("moment");
 
 /**
  * Removes the scores from the teams string (if it exists)
@@ -113,9 +111,11 @@ NHLGameBuilder.prototype.buildNHLGame = function(date, time, teams, location, ne
     isBlackedOut = isGameBlackedOut(networks);
     if (isBlackedOut) {
         availableGameTimeUTC = blackOutAvailableGameTimeUTC(gameTimeUTC);
+    } else {
+        availableGameTimeUTC = gameTimeUTC;
     }
 
-    return new NHLGame({
+    return {
         date: date,
         time: time,
         teams: teams,
@@ -127,7 +127,7 @@ NHLGameBuilder.prototype.buildNHLGame = function(date, time, teams, location, ne
         whoWon: whoWon,
         isBlackedOut: isBlackedOut,
         availableGameTimeUTC: availableGameTimeUTC
-    });
+    };
 };
 
 module.exports = NHLGameBuilder;

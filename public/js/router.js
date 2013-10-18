@@ -12,7 +12,7 @@ define([
     var Router = Backbone.Router.extend({
         routes: {
             "": "landing",
-            "schedule": "schedule",
+            "nhl/schedule": "nhlSchedule",
             "*invalidRoute": "badRoute"
         },
 
@@ -26,13 +26,13 @@ define([
         },
 
         landing: function() {
-            // by default, send them to the schedule page
-            this.navigate("schedule", {
+            // by default, send them to the NHL schedule page
+            this.navigate("nhl/schedule", {
                 trigger: true
             });
         },
 
-        schedule: function(queryParams) {
+        nhlSchedule: function(queryParams) {
             if (scheduleView) {
                 scheduleView.close();
             }
