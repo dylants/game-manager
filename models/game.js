@@ -11,7 +11,7 @@ var teamsWithoutScores = function(teams) {
 
     removeDigitsRegex = /[^\d\s]+/g;
 
-    return teams.match(removeDigitsRegex).join(" ");
+    return teams.match(removeDigitsRegex).join(" ").replace(/-/g, "at");
 };
 
 /**
@@ -106,7 +106,7 @@ function Game(date, time, teams, location, networks) {
 
     // pull the scores out, figure out if the game is over, and who won
     this.teamsWithoutScores = teamsWithoutScores(this.teams);
-    this.isGameOver = isGameOver(this.teamsWithoutScores);
+    this.isGameOver = isGameOver(this.teams);
     if (this.isGameOver) {
         this.whoWon = whoWon(this.teams);
     }
