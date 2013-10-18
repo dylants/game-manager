@@ -81,7 +81,7 @@ var blackOutAvailableGameTimeUTC = function(gameTimeUTC) {
 };
 
 /**
- * Creates a Game, which has a date and time, teams, and a based on the networks,
+ * Creates an NHLGame, which has a date and time, teams, and a based on the networks,
  * if it's blacked out
  *
  * @constructor
@@ -93,7 +93,7 @@ var blackOutAvailableGameTimeUTC = function(gameTimeUTC) {
  * @param {String} location The location of the game
  * @param {String} networks The networks that aired the game (or will air)
  */
-function Game(date, time, teams, location, networks) {
+function NHLGameBuilder(date, time, teams, location, networks) {
     // store the passed in values
     this.date = date;
     this.time = time;
@@ -118,4 +118,4 @@ function Game(date, time, teams, location, networks) {
     }
 }
 
-module.exports = Game;
+module.exports = NHLGameBuilder;
