@@ -1,4 +1,6 @@
-var moment = require("moment");
+var moment = require("moment"),
+    mongoose = require("mongoose"),
+    NHLGame = mongoose.model("NHLGame");
 
 /**
  * Removes the scores from the teams string (if it exists)
@@ -6,7 +8,7 @@ var moment = require("moment");
  * @param  {String} teams The teams with optional score
  * @return {String}       The teams without a game score
  */
-var teamsWithoutScores = function(teams) {
+var removeScoresFromTeams = function(teams) {
     var removeDigitsRegex;
 
     removeDigitsRegex = /[^\d\s]+/g;
@@ -20,7 +22,7 @@ var teamsWithoutScores = function(teams) {
  * @param  {String}  teams The teams with an optional score
  * @return {Boolean}       true iff the game is over (has a score)
  */
-var isGameOver = function(teams) {
+var determineIfGameIsOver = function(teams) {
     if (teams.indexOf("-") > 0) {
         return true;
     } else {
@@ -34,7 +36,7 @@ var isGameOver = function(teams) {
  * @param  {String} teams The teams string with score
  * @return {String}       The team who won or "tie" if tied
  */
-var whoWon = function(teams) {
+var determineWhoWon = function(teams) {
     var teamsWithScores, team1, team1Score, team2, team2Score;
 
     // first split the teams into individual team + score
@@ -80,11 +82,11 @@ var blackOutAvailableGameTimeUTC = function(gameTimeUTC) {
     return moment(gameTimeUTC).add("hours", 52).valueOf();
 };
 
+function NHLGameBuilder() {}
+
 /**
  * Creates an NHLGame, which has a date and time, teams, and a based on the networks,
  * if it's blacked out
- *
- * @constructor
  *
  * @param {String} date     The date the game was aired (or will air)
  * @param {String} time     The time the game will air
@@ -93,29 +95,39 @@ var blackOutAvailableGameTimeUTC = function(gameTimeUTC) {
  * @param {String} location The location of the game
  * @param {String} networks The networks that aired the game (or will air)
  */
-function NHLGameBuilder(date, time, teams, location, networks) {
-    // store the passed in values
-    this.date = date;
-    this.time = time;
-    this.teams = teams;
-    this.location = location;
-    this.networks = networks;
+NHLGameBuilder.prototype.buildNHLGame = function(date, time, teams, location, networks) {
+    var gameTimeUTC, teamsWithoutScores, isGameOver, whoWon, isBlackedOut,
+        availableGameTimeUTC;
 
     // calculate the UTC game time
-    this.gameTimeUTC = moment(this.date + " " + this.time).valueOf();
+    gameTimeUTC = moment(date + " " + time).valueOf();
 
     // pull the scores out, figure out if the game is over, and who won
-    this.teamsWithoutScores = teamsWithoutScores(this.teams);
-    this.isGameOver = isGameOver(this.teams);
-    if (this.isGameOver) {
-        this.whoWon = whoWon(this.teams);
+    teamsWithoutScores = removeScoresFromTeams(teams);
+    isGameOver = determineIfGameIsOver(teams);
+    if (isGameOver) {
+        whoWon = determineWhoWon(teams);
     }
 
     // populate the blacked out attributes
-    this.isBlackedOut = isGameBlackedOut(this.networks);
-    if (this.isBlackedOut) {
-        this.availableGameTimeUTC = blackOutAvailableGameTimeUTC(this.gameTimeUTC);
+    isBlackedOut = isGameBlackedOut(networks);
+    if (isBlackedOut) {
+        availableGameTimeUTC = blackOutAvailableGameTimeUTC(gameTimeUTC);
     }
-}
+
+    return new NHLGame({
+        date: date,
+        time: time,
+        teams: teams,
+        location: location,
+        networks: networks,
+        gameTimeUTC: gameTimeUTC,
+        teamsWithoutScores: teamsWithoutScores,
+        isGameOver: isGameOver,
+        whoWon: whoWon,
+        isBlackedOut: isBlackedOut,
+        availableGameTimeUTC: availableGameTimeUTC
+    });
+};
 
 module.exports = NHLGameBuilder;

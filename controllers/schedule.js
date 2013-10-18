@@ -1,6 +1,6 @@
 var csv = require("csv"),
     request = require("request"),
-    Game = require("../models/game");
+    NHLGameBuilder = require("../model-builders/nhl-game-builder");
 
 var getScheduleUrl = function(team) {
     return "http://" + team + ".nhl.com/schedule/full.csv";
@@ -9,11 +9,12 @@ var getScheduleUrl = function(team) {
 module.exports = function(app) {
     app.namespace("/api", function() {
         app.get("/schedule", function(req, res) {
-            var team, games;
+            var team, nhlGames, nhlGameBuilder;
 
             // default to blackhawks
             team = req.query.team ? req.query.team : "blackhawks";
-            games = [];
+            nhlGames = [];
+            nhlGameBuilder = new NHLGameBuilder();
 
             request.get(getScheduleUrl(team), function(error, response, body) {
                 csv().from.string(body, {
@@ -22,25 +23,27 @@ module.exports = function(app) {
                 })
                 // when a record is found in the CSV file (a row)
                 .on("record", function(row, index) {
-                    var game, teams;
+                    var nhlGame, teams;
 
                     // skip the header row
                     if (index === 0) {
                         return;
                     }
 
+
                     // date, time, teams, location, networks
-                    game = new Game(row[0].trim(),
+                    nhlGame = nhlGameBuilder.buildNHLGame(
+                        row[0].trim(),
                         row[1].trim(),
                         row[3].trim(),
                         row[4].trim(),
                         row[5].trim());
-                    games.push(game);
+                    nhlGames.push(nhlGame);
 
                 })
                 // when the end of the CSV document is reached
                 .on("end", function() {
-                    res.send(games);
+                    res.send(nhlGames);
                 })
                 // if any errors occur
                 .on("error", function(error) {
