@@ -15,7 +15,7 @@ define([
 
         Backbone.history.start({
             silent: false,
-            root: "/nhl-game-data",
+            root: "/game-manager",
             pushState: true
         });
     });
