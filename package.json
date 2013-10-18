@@ -12,7 +12,8 @@
         "csv": "~0.3.6",
         "request": "~2.27.0",
         "express-namespace": "~0.1.1",
-        "mongoose": "~3.6.20"
+        "mongoose": "~3.6.20",
+        "moment": "~2.3.1"
     },
     "devDependencies": {
         "grunt": "~0.4.1",
