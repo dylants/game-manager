@@ -1,4 +1,6 @@
-var moment = require("moment");
+var moment = require("moment"),
+    mongoose = require("mongoose"),
+    Game = mongoose.model("Game");
 
 /**
  * Removes the scores from the teams string (if it exists)
@@ -25,32 +27,6 @@ var determineIfGameIsOver = function(teams) {
         return true;
     } else {
         return false;
-    }
-};
-
-/**
- * Returns the team who won the game (or "tie" if tied)
- *
- * @param  {String} teams The teams string with score
- * @return {String}       The team who won or "tie" if tied
- */
-var determineWhoWon = function(teams) {
-    var teamsWithScores, team1, team1Score, team2, team2Score;
-
-    // first split the teams into individual team + score
-    teamsWithScores = teams.split(" - ");
-    // determine each team and score
-    team1 = teamsWithScores[0].slice(0, teamsWithScores[0].lastIndexOf(" ")).trim();
-    team1Score = teamsWithScores[0].slice(teamsWithScores[0].lastIndexOf(" ")).trim();
-    team2 = teamsWithScores[1].slice(0, teamsWithScores[1].lastIndexOf(" ")).trim();
-    team2Score = teamsWithScores[1].slice(teamsWithScores[1].lastIndexOf(" ")).trim();
-
-    if (team1Score > team2Score) {
-        return team1;
-    } else if (team2Score > team1Score) {
-        return team2;
-    } else {
-        return "tie";
     }
 };
 
@@ -95,7 +71,7 @@ function NHLGameBuilder() {}
  */
 NHLGameBuilder.prototype.buildNHLGame = function(date, time, teams, location, networks) {
     var gameTimeUTC, teamsWithoutScores, isGameOver, whoWon, isBlackedOut,
-        availableGameTimeUTC;
+        availableGameTimeUTC, teamsWithScores, team1, team1Score, team2, team2Score;
 
     // calculate the UTC game time
     gameTimeUTC = moment(date + " " + time).valueOf();
@@ -103,8 +79,28 @@ NHLGameBuilder.prototype.buildNHLGame = function(date, time, teams, location, ne
     // pull the scores out, figure out if the game is over, and who won
     teamsWithoutScores = removeScoresFromTeams(teams);
     isGameOver = determineIfGameIsOver(teams);
+    // determine the game scores, and who won
     if (isGameOver) {
-        whoWon = determineWhoWon(teams);
+        // first split the teams into individual team + score
+        teamsWithScores = teams.split(" - ");
+        // determine each team and score
+        team1 = teamsWithScores[0].slice(0, teamsWithScores[0].lastIndexOf(" ")).trim();
+        team1Score = teamsWithScores[0].slice(teamsWithScores[0].lastIndexOf(" ")).trim();
+        team2 = teamsWithScores[1].slice(0, teamsWithScores[1].lastIndexOf(" ")).trim();
+        team2Score = teamsWithScores[1].slice(teamsWithScores[1].lastIndexOf(" ")).trim();
+
+        if (team1Score > team2Score) {
+            whoWon =  team1;
+        } else if (team2Score > team1Score) {
+            whoWon =  team2;
+        } else {
+            whoWon = "tie";
+        }
+    } else {
+        // else just find out who the teams are
+        teamsWithoutScores = teamsWithoutScores.split(" at ");
+        team1 = teamsWithoutScores[0];
+        team2 = teamsWithoutScores[1];
     }
 
     // populate the blacked out attributes
@@ -115,19 +111,20 @@ NHLGameBuilder.prototype.buildNHLGame = function(date, time, teams, location, ne
         availableGameTimeUTC = gameTimeUTC;
     }
 
-    return {
-        date: date,
-        time: time,
-        teams: teams,
-        location: location,
-        networks: networks,
+    return new Game({
+        sport: "NHL",
         gameTimeUTC: gameTimeUTC,
-        teamsWithoutScores: teamsWithoutScores,
+        awayTeamName: team1,
+        homeTeamName: team2,
+        location: location,
+        awayTeamScore: team1Score,
+        homeTeamScore: team2Score,
         isGameOver: isGameOver,
-        whoWon: whoWon,
+        winningTeamName: whoWon,
+        networks: networks,
         isBlackedOut: isBlackedOut,
         availableGameTimeUTC: availableGameTimeUTC
-    };
+    });
 };
 
 module.exports = NHLGameBuilder;

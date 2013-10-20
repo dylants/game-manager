@@ -1,5 +1,6 @@
 var mongoose = require("mongoose"),
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema,
+    Game = require("./game");
 
 var TeamSchema = new Schema({
     name: {
@@ -20,9 +21,7 @@ var TeamSchema = new Schema({
     division: {
         type: String
     },
-    schedule: {
-        type: Array
-    },
+    schedule: [Game],
     record: {
         type: String
     }

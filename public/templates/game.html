@@ -3,26 +3,30 @@
 <% } else { %>
 <div class="game row">
 <% } %>
-    <% if (isBlackedOut) { %>
-    <% var m = moment(availableGameTimeUTC) %>
+    <% var gameTimeMoment = moment(gameTimeUTC) %>
+    <% var availableTimeMoment = moment(availableGameTimeUTC) %>
     <div class="game-element col-md-2">
-        <div class="original-time"><%- date %></div>
-        <%- m.format("MM/DD/YYYY") %>
+        <% if (isBlackedOut) { %>
+        <div class="original-time">
+        <% } %>
+        <%- gameTimeMoment.format("MM/DD/YYYY") %>
+        <% if (isBlackedOut) { %>
+        </div>
+        <%- availableTimeMoment.format("MM/DD/YYYY") %>
+        <% } %>
     </div>
     <div class="game-element col-md-2">
-        <div class="original-time"><%- time %></div>
-        <%- m.format("h:mm A") %>
+        <% if (isBlackedOut) { %>
+        <div class="original-time">
+        <% } %>
+        <%- gameTimeMoment.format("h:mm A") %>
+        <% if (isBlackedOut) { %>
+        </div>
+        <%- availableTimeMoment.format("h:mm A") %>
+        <% } %>
     </div>
-    <% } else { %>
-    <div class="game-element col-md-2">
-        <%- date %>
-    </div>
-    <div class="game-element col-md-2">
-        <%- time %>
-    </div>
-    <% } %>
     <div class="game-element col-md-4">
-        <%- teamsWithoutScores %>
+        <%- awayTeamName %> at <%- homeTeamName %>
     </div>
     <div class="game-element col-md-4">
         <%- networks %>
