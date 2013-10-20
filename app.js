@@ -1,9 +1,11 @@
 require("express-namespace");
+require("js-yaml");
 var express = require("express"),
     fs = require("fs"),
     cons = require("consolidate"),
     app = express(),
-    mongoose = require("mongoose");
+    mongoose = require("mongoose"),
+    config = require("./config.yaml");
 
 // configure the app (all environments)
 app.configure(function() {
@@ -20,6 +22,9 @@ app.configure(function() {
 
     // use express' body parser to access body elements later
     app.use(express.bodyParser());
+
+    // read in the config and set it in the app to be accessed later
+    app.set("config", config);
 
     /*
      * Connect to mongoDB at localhost using the database "game".

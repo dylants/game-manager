@@ -22,22 +22,28 @@ module.exports = function(app) {
 
         app.get("/teams/:team", function(req, res) {
             Team.findOne({
-                shortName: req.params.team
+                name: req.params.team
             }, function(err, team) {
                 res.send(team);
             });
         });
 
         app.get("/import-teams", function(req, res) {
-            var team;
+            var teams, team, i;
 
-            // TODO import teams from somewhere?
-            team = new Team({
-                fullName: "Chicago Blackhawks",
-                shortName: "blackhawks",
-                sport: "NHL"
-            });
-            team.save();
+            teams = app.get("config").nhl.teams;
+            for (i = 0; i < teams.length; i++) {
+                team = new Team({
+                    // name is the lowercase, trimmed mascot
+                    name: teams[i].mascot.toLowerCase().replace(/\s*/g, ""),
+                    city: teams[i].city,
+                    mascot: teams[i].mascot,
+                    sport: "NHL",
+                    conference: teams[i].conference,
+                    division: teams[i].division
+                });
+                team.save();
+            }
             res.send("done!");
         });
 

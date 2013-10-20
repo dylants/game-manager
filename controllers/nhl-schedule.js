@@ -18,7 +18,7 @@ module.exports = function(app) {
             team = req.params.team;
 
             Team.findOne({
-                shortName: team
+                name: team
             }, function(err, team) {
                 if (err) {
                     console.error(err);
@@ -52,7 +52,7 @@ module.exports = function(app) {
                 // Get the NHL team we're trying to load the schedule for
                 function(csvString, callback) {
                     Team.findOne({
-                        shortName: teamName
+                        name: teamName
                     }, function(err, team) {
                         if (err) {
                             callback(err);

@@ -1,0 +1,162 @@
+---
+# ==========
+# NHL Config
+# ==========
+nhl:
+    teams:
+        # ==== WESTERN ====
+        # Pacific
+        -
+            city: "Anaheim"
+            mascot: "Ducks"
+            conference: "Western"
+            division: "Pacific"
+        - 
+            city: "Calgary"
+            mascot: "Flames"
+            conference: "Western"
+            division: "Pacific"
+        - 
+            city: "Edmonton"
+            mascot: "Oilers"
+            conference: "Western"
+            division: "Pacific"
+        - 
+            city: "Los Angeles"
+            mascot: "Kings"
+            conference: "Western"
+            division: "Pacific"
+        - 
+            city: "Phoenix"
+            mascot: "Coyotes"
+            conference: "Western"
+            division: "Pacific"
+        - 
+            city: "San Jose"
+            mascot: "Sharks"
+            conference: "Western"
+            division: "Pacific"
+        - 
+            city: "Vancouver"
+            mascot: "Canucks"
+            conference: "Western"
+            division: "Pacific"
+        # Central
+        - 
+            city: "Chicago"
+            mascot: "Blackhawks"
+            conference: "Western"
+            division: "Central"
+        - 
+            city: "Colorado"
+            mascot: "Avalanche"
+            conference: "Western"
+            division: "Central"
+        - 
+            city: "Dallas"
+            mascot: "Stars"
+            conference: "Western"
+            division: "Central"
+        - 
+            city: "Minnesota"
+            mascot: "Wild"
+            conference: "Western"
+            division: "Central"
+        - 
+            city: "Nashville"
+            mascot: "Predators"
+            conference: "Western"
+            division: "Central"
+        - 
+            city: "St. Louis"
+            mascot: "Blues"
+            conference: "Western"
+            division: "Central"
+        - 
+            city: "Winnipeg"
+            mascot: "Jets"
+            conference: "Western"
+            division: "Central"
+        # ==== EASTERN ====
+        # Atlantic
+        - 
+            city: "Boston"
+            mascot: "Bruins"
+            conference: "Eastern"
+            division: "Atlantic"
+        - 
+            city: "Buffalo"
+            mascot: "Sabres"
+            conference: "Eastern"
+            division: "Atlantic"
+        - 
+            city: "Detroit"
+            mascot: "Red Wings"
+            conference: "Eastern"
+            division: "Atlantic"
+        - 
+            city: "Florida"
+            mascot: "Panthers"
+            conference: "Eastern"
+            division: "Atlantic"
+        - 
+            city: "Montreal"
+            mascot: "Canadiens"
+            conference: "Eastern"
+            division: "Atlantic"
+        - 
+            city: "Ottawa"
+            mascot: "Senators"
+            conference: "Eastern"
+            division: "Atlantic"
+        - 
+            city: "Tampa Bay"
+            mascot: "Lightning"
+            conference: "Eastern"
+            division: "Atlantic"
+        - 
+            city: "Toronto"
+            mascot: "Maple Leafs"
+            conference: "Eastern"
+            division: "Atlantic"
+        # Metropolitan
+        - 
+            city: "Carolina"
+            mascot: "Hurricanes"
+            conference: "Eastern"
+            division: "Metropolitan"
+        - 
+            city: "Columbus"
+            mascot: "Blue Jackets"
+            conference: "Eastern"
+            division: "Metropolitan"
+        - 
+            city: "New Jersey"
+            mascot: "Devils"
+            conference: "Eastern"
+            division: "Metropolitan"
+        - 
+            city: "New York"
+            mascot: "Islanders"
+            conference: "Eastern"
+            division: "Metropolitan"
+        - 
+            city: "New York"
+            mascot: "Rangers"
+            conference: "Eastern"
+            division: "Metropolitan"
+        - 
+            city: "Philadelphia"
+            mascot: "Flyers"
+            conference: "Eastern"
+            division: "Metropolitan"
+        - 
+            city: "Pittsburgh"
+            mascot: "Penguins"
+            conference: "Eastern"
+            division: "Metropolitan"
+        - 
+            city: "Washington"
+            mascot: "Capitals"
+            conference: "Eastern"
+            division: "Metropolitan"
