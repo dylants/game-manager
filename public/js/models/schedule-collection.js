@@ -8,7 +8,7 @@ define([
     return Backbone.Collection.extend({
 
         url: function() {
-            return "/api/nhl/schedule/" + this.team;
+            return "/api/nhl/teams/" + this.team + "/schedule";
         },
 
         model: GameModel,

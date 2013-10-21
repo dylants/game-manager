@@ -21,10 +21,7 @@ var TeamSchema = new Schema({
     division: {
         type: String
     },
-    schedule: [Game],
-    record: {
-        type: String
-    }
+    schedule: [{type: mongoose.Schema.ObjectId, ref: "Game"}]
 });
 
 mongoose.model("Team", TeamSchema);

@@ -60,7 +60,8 @@ function NHLGameBuilder() {}
 
 /**
  * Creates an NHLGame, which has a date and time, teams, and a based on the networks,
- * if it's blacked out
+ * if it's blacked out. This will either create and save a new Game (if it doesn't exist
+ * yet) or find and return the existing Game (if it already exists).
  *
  * @param {String} date     The date the game was aired (or will air)
  * @param {String} time     The time the game will air
@@ -68,10 +69,12 @@ function NHLGameBuilder() {}
  *                          is complete)
  * @param {String} location The location of the game
  * @param {String} networks The networks that aired the game (or will air)
+ * @param {String} callback Function called when game has been built with the signature:
+ *                          callback(err, game)
  */
-NHLGameBuilder.prototype.buildNHLGame = function(date, time, teams, location, networks) {
+NHLGameBuilder.prototype.buildNHLGame = function(date, time, teams, location, networks, callback) {
     var gameTimeUTC, teamsWithoutScores, isGameOver, whoWon, isBlackedOut,
-        availableGameTimeUTC, teamsWithScores, team1, team1Score, team2, team2Score;
+        availableGameTimeUTC, teamsWithScores, team1, team1Score, team2, team2Score, game;
 
     // calculate the UTC game time
     gameTimeUTC = moment(date + " " + time).valueOf();
@@ -111,20 +114,61 @@ NHLGameBuilder.prototype.buildNHLGame = function(date, time, teams, location, ne
         availableGameTimeUTC = gameTimeUTC;
     }
 
-    return new Game({
+    // try to find the game if it already exists
+    Game.findOne({
         sport: "NHL",
         gameTimeUTC: gameTimeUTC,
         awayTeamName: team1,
         homeTeamName: team2,
-        location: location,
-        awayTeamScore: team1Score,
-        homeTeamScore: team2Score,
-        isGameOver: isGameOver,
-        winningTeamName: whoWon,
-        networks: networks,
-        isBlackedOut: isBlackedOut,
-        availableGameTimeUTC: availableGameTimeUTC
+        location: location
+    }, function(err, game) {
+        if (err) {
+            // if an error exists, exit here
+            callback(err);
+        } else {
+            if (game) {
+                // if the game exists, check to see if it's now over (and wasn't before)
+                if (game.toJSON().isGameOver !== isGameOver) {
+                    console.log("updating game: " + game.gameTimeUTC);
+                    // update the existing game
+                    game.update({
+                        awayTeamScore: team1Score,
+                        homeTeamScore: team2Score,
+                        isGameOver: isGameOver,
+                        winningTeamName: whoWon
+                    });
+                }
+                console.log("game already exists, returning game with time: " + game.gameTimeUTC);
+                callback(null, game);
+            } else {
+                // create a new game
+                console.log("game does not yet exist, creating game with time: " + game.gameTimeUTC);
+                game = new Game({
+                    sport: "NHL",
+                    gameTimeUTC: gameTimeUTC,
+                    awayTeamName: team1,
+                    homeTeamName: team2,
+                    location: location,
+                    awayTeamScore: team1Score,
+                    homeTeamScore: team2Score,
+                    isGameOver: isGameOver,
+                    winningTeamName: whoWon,
+                    networks: networks,
+                    isBlackedOut: isBlackedOut,
+                    availableGameTimeUTC: availableGameTimeUTC
+                });
+                // save the newly created game
+                game.save(function(err, game) {
+                    if (err) {
+                        callback(err);
+                    } else {
+                        callback(null, game);
+                    }
+                });
+            }
+        }
     });
+
 };
 
 module.exports = NHLGameBuilder;

@@ -12,14 +12,14 @@ var getScheduleUrl = function(team) {
 module.exports = function(app) {
     app.namespace("/api/nhl", function() {
 
-        app.get("/schedule/:team", function(req, res) {
+        app.get("/teams/:team/schedule", function(req, res) {
             var team;
 
             team = req.params.team;
 
             Team.findOne({
                 name: team
-            }, function(err, team) {
+            }).populate("schedule").exec(function(err, team) {
                 if (err) {
                     console.error(err);
                     res.send(500, err);
@@ -34,7 +34,7 @@ module.exports = function(app) {
             });
         });
 
-        app.get("/import-schedule/:team", function(req, res) {
+        app.get("/teams/:team/import-schedule", function(req, res) {
             var teamName, nhlGames, nhlGameBuilder;
 
             teamName = req.params.team;
@@ -63,7 +63,7 @@ module.exports = function(app) {
                 },
                 // Parse the schedule into individual games
                 function(csvString, nhlTeam, callback) {
-                    var nhlGames = [];
+                    var valuesForNHLGames = [];
 
                     csv().from.string(csvString, {
                         delimiter: ",",
@@ -78,20 +78,20 @@ module.exports = function(app) {
                             return;
                         }
 
+                        // store these values in an array to be processed later
                         // date, time, teams, location, networks
-                        nhlGame = nhlGameBuilder.buildNHLGame(
-                            row[0].trim(),
-                            row[1].trim(),
-                            row[3].trim(),
-                            row[4].trim(),
-                            row[5].trim());
-                        // add the game to our list
-                        nhlGames.push(nhlGame);
+                        valuesForNHLGames.push({
+                            date: row[0].trim(),
+                            time: row[1].trim(),
+                            teams: row[3].trim(),
+                            location: row[4].trim(),
+                            networks: row[5].trim()
+                        });
                     })
                     // when the end of the CSV document is reached
                     .on("end", function() {
-                        // call the next function with the games
-                        callback(null, nhlGames, nhlTeam);
+                        // call the next function with the values for these games
+                        callback(null, valuesForNHLGames, nhlTeam);
                     })
                     // if any errors occur
                     .on("error", function(error) {
@@ -99,9 +99,52 @@ module.exports = function(app) {
                         callback(error.message);
                     });
                 },
+                // Find or create each Game using the builder
+                function(valuesForNHLGames, nhlTeam, callback) {
+                    var count, nhlGames;
+
+                    nhlGames = [];
+                    count = 0;
+                    // We gotta create these NHL games asynchronously,
+                    // so use an inner async block
+                    async.whilst(
+                        function() {
+                            return count < valuesForNHLGames.length;
+                        },
+                        function(whilstCallback) {
+                            var nhlGameValues;
+
+                            nhlGameValues = valuesForNHLGames[count];
+                            count++;
+                            // date, time, teams, location, networks
+                            nhlGameBuilder.buildNHLGame(
+                                nhlGameValues.date,
+                                nhlGameValues.time,
+                                nhlGameValues.teams,
+                                nhlGameValues.location,
+                                nhlGameValues.networks,
+                                function(err, nhlGame) {
+                                    if (err) {
+                                        whilstCallback(err);
+                                    } else {
+                                        // add the game to our list
+                                        nhlGames.push(nhlGame);
+                                        whilstCallback();
+                                    }
+                                });
+                        },
+                        function(err) {
+                            if (err) {
+                                callback(err);
+                            } else {
+                                callback(null, nhlGames, nhlTeam);
+                            }
+                        }
+                    );
+                },
                 // Save the schedule to the team
                 function(nhlGames, nhlTeam, callback) {
-                    // save the games to the team
+                    // store the games on the team
                     nhlTeam.schedule = nhlGames;
                     nhlTeam.save(function(err) {
                         if (err) {
