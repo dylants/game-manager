@@ -142,7 +142,7 @@ NHLGameBuilder.prototype.buildNHLGame = function(date, time, teams, location, ne
                 callback(null, game);
             } else {
                 // create a new game
-                console.log("game does not yet exist, creating game with time: " + game.gameTimeUTC);
+                console.log("game does not yet exist, creating game with time: " + gameTimeUTC);
                 game = new Game({
                     sport: "NHL",
                     gameTimeUTC: gameTimeUTC,
