@@ -34,7 +34,7 @@ module.exports = function(app) {
             });
         });
 
-        app.get("/teams/:team/import-schedule", function(req, res) {
+        app.get("/teams/:team/update-schedule", function(req, res) {
             var teamName, nhlGames, nhlGameBuilder;
 
             teamName = req.params.team;
