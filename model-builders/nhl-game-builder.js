@@ -128,18 +128,24 @@ NHLGameBuilder.prototype.buildNHLGame = function(date, time, teams, location, ne
         } else {
             if (game) {
                 // if the game exists, check to see if it's now over (and wasn't before)
-                if (game.toJSON().isGameOver !== isGameOver) {
+                if (game.isGameOver !== isGameOver) {
                     console.log("updating game: " + game.gameTimeUTC);
                     // update the existing game
-                    game.update({
-                        awayTeamScore: team1Score,
-                        homeTeamScore: team2Score,
-                        isGameOver: isGameOver,
-                        winningTeamName: whoWon
+                    game.awayTeamScore = team1Score;
+                    game.homeTeamScore = team2Score;
+                    game.isGameOver = isGameOver;
+                    game.winningTeamName = whoWon;
+                    game.save(function(err, game) {
+                        if (err) {
+                            callback(err);
+                        } else {
+                            callback(null, game);
+                        }
                     });
+                } else {
+                    console.log("game already exists, returning game with time: " + game.gameTimeUTC);
+                    callback(null, game);
                 }
-                console.log("game already exists, returning game with time: " + game.gameTimeUTC);
-                callback(null, game);
             } else {
                 // create a new game
                 console.log("game does not yet exist, creating game with time: " + gameTimeUTC);
