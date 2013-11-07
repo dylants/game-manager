@@ -1,11 +1,13 @@
 require.config({
     paths: {
-        "underscore": "/assets/js/lib/underscore-min",
-        "backbone": "/assets/js/lib/backbone-min",
+        "underscore": "/assets/js/lib/underscore",
+        "backbone": "/assets/js/lib/backbone",
         "backbone.queryparams": "/assets/js/lib/backbone.queryparams",
-        "jquery": "/assets/js/lib/jquery-2.0.3.min",
+        "jquery": "/assets/js/lib/jquery-2.0.3",
         "text": "/assets/js/lib/text",
         "moment": "/assets/js/lib/moment.min",
+        "session-model": "/assets/js/models/session-model",
+        "session-view": "/assets/js/views/session-view",
         "schedule-collection": "/assets/js/models/schedule-collection",
         "schedule-view": "/assets/js/views/schedule-view",
         "game-model": "/assets/js/models/game-model",
