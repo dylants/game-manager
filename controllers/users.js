@@ -18,17 +18,20 @@ module.exports = function(app) {
         });
 
         app.put("/users/:id", function(req, res) {
-            console.log("id: " + req.params.id);
-            User.findById(req.params.id, function(err, user) {
-                var gameWatched;
+            User.findByIdAndUpdate(req.params.id, req.body, function(err, user) {
+                // if there is an error, handle it and return
+                if (err) {
+                    console.error(err);
+                    res.send(500);
+                    return;
+                }
 
-                gameWatched = req.body.gameWatched;
-                console.log("gameWatched: " + JSON.stringify(gameWatched));
-                user.gamesWatched.push(gameWatched);
-                console.log("user: " + user);
-                user.save(function(err, user) {
+                // with no errors, respond with the updated user (if it exists)
+                if (user === null) {
+                    res.send(404);
+                } else {
                     res.send(user);
-                });
+                }
             });
         });
 

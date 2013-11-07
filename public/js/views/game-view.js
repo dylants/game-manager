@@ -25,17 +25,28 @@ define([
         },
 
         watchedGame: function(ev) {
-            var gameWatched;
+            var sportsWatched, i, nhlGamesWatched;
 
-            console.log("clicked!");
-            console.log(this.model.toJSON());
-            gameWatched = {
-                sport: "nhl",
+            sportsWatched = this.userModel.get("sportsWatched");
+
+            for (i=0; i<sportsWatched.length; i++) {
+                if (sportsWatched[i].sport === "NHL") {
+                    nhlGamesWatched = sportsWatched[i].gamesWatched;
+                    break;
+                }
+            }
+            if (!nhlGamesWatched) {
+                sportsWatched.push({
+                    sport: "NHL",
+                    gamesWatched: []
+                });
+                nhlGamesWatched = sportsWatched[sportsWatched.length - 1].gamesWatched;
+            }
+
+            nhlGamesWatched.push({
                 gameTimeUTC: this.model.get("gameTimeUTC")
-            };
-            this.userModel.save({
-                gameWatched: gameWatched
             });
+            this.userModel.save();
         }
     });
 });
