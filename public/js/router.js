@@ -26,10 +26,18 @@ define([
         },
 
         before: function(route, params) {
+            var that;
+
             if (!sessionModel) {
                 sessionModel = new SessionModel();
             }
-            var that = this;
+
+            if (route === "login") {
+                // allow those to go through without any problems
+                return true;
+            }
+
+            that = this;
             $.when(
                 sessionModel.fetch()
             ).done(
