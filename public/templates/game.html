@@ -1,8 +1,4 @@
-<% if (isGameOver) { %>
-<div class="game row game-over" data-gameTimeUTC="<%- gameTimeUTC %>">
-<% } else { %>
 <div class="game row" data-gameTimeUTC="<%- gameTimeUTC %>">
-<% } %>
     <% var gameTimeMoment = moment(gameTimeUTC) %>
     <% var availableTimeMoment = moment(availableGameTimeUTC) %>
     <div class="game-element col-md-2">

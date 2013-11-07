@@ -5,9 +5,7 @@ var UserSchema = new Schema({
     username: String,
     sportsWatched: [{
         sport: String,
-        gamesWatched: [{
-            gameTimeUTC: Number
-        }]
+        gamesWatched: Array
     }]
 });
 

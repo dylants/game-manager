@@ -25,11 +25,12 @@ define([
         },
 
         watchedGame: function(ev) {
-            var sportsWatched, i, nhlGamesWatched;
+            var sportsWatched, i, nhlGamesWatched, gameTimeUTC, availableGameTimeUTC,
+                currentTime;
 
             sportsWatched = this.userModel.get("sportsWatched");
 
-            for (i=0; i<sportsWatched.length; i++) {
+            for (i = 0; i < sportsWatched.length; i++) {
                 if (sportsWatched[i].sport === "NHL") {
                     nhlGamesWatched = sportsWatched[i].gamesWatched;
                     break;
@@ -43,10 +44,16 @@ define([
                 nhlGamesWatched = sportsWatched[sportsWatched.length - 1].gamesWatched;
             }
 
-            nhlGamesWatched.push({
-                gameTimeUTC: this.model.get("gameTimeUTC")
-            });
-            this.userModel.save();
+            gameTimeUTC = (+this.model.get("gameTimeUTC"));
+            availableGameTimeUTC = (+this.model.get("availableGameTimeUTC"));
+            currentTime = new Date();
+            currentTime = currentTime.valueOf();
+            // only add the game if it's not already there && it is available
+            if ((nhlGamesWatched.indexOf(gameTimeUTC) === -1) &&
+                (currentTime > availableGameTimeUTC)) {
+                nhlGamesWatched.push(gameTimeUTC);
+                this.userModel.save();
+            }
         }
     });
 });
