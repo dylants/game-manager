@@ -40,7 +40,7 @@ module.exports = function(app) {
                     console.log("user already exists, logging in user");
 
                     res.cookie(SESSION_COOKIE, user.id);
-                    res.send(201);
+                    res.send(201, user);
                 } else {
                     console.log("user does not exist, creating...");
                     // the user does not exist, create it
@@ -56,7 +56,7 @@ module.exports = function(app) {
                         console.log("created user");
                         // use this user as the session cookie
                         res.cookie(SESSION_COOKIE, user.id);
-                        res.send(201);
+                        res.send(201, user);
                     });
                 }
             });

@@ -2,9 +2,11 @@ var mongoose = require("mongoose"),
     Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
-    any: Schema.Types.Mixed
-}, {
-    strict: false
+    username: String,
+    gamesWatched: {
+        sport: String,
+        gameTimeUTC: Number
+    }
 });
 
 mongoose.model("User", UserSchema);

@@ -2,16 +2,19 @@
 define([
     "backbone",
     "jquery",
+    "session-model",
+    "session-view",
     "schedule-collection",
     "schedule-view"
-], function(Backbone, $, ScheduleCollection, ScheduleView) {
+], function(Backbone, $, SessionModel, SessionView, ScheduleCollection, ScheduleView) {
     "use strict";
 
-    var scheduleCollection, scheduleView;
+    var sessionModel, sessionView, scheduleCollection, scheduleView;
 
     var Router = Backbone.Router.extend({
         routes: {
             "": "landing",
+            "login": "login",
             "nhl/schedule": "nhlSchedule",
             "*invalidRoute": "badRoute"
         },
@@ -32,14 +35,28 @@ define([
             });
         },
 
+        login: function() {
+            if (sessionView) {
+                sessionView.close();
+            }
+
+            sessionModel = new SessionModel();
+            sessionView = new SessionView({
+                model: sessionModel
+            });
+            sessionView.render();
+        },
+
         nhlSchedule: function(queryParams) {
             if (scheduleView) {
                 scheduleView.close();
             }
 
+            sessionModel = new SessionModel();
             scheduleCollection = new ScheduleCollection([], queryParams);
             scheduleView = new ScheduleView({
-                collection: scheduleCollection
+                collection: scheduleCollection,
+                userData: sessionModel
             });
             scheduleView.render();
         },

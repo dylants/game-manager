@@ -17,8 +17,9 @@ define([
 
         events: {},
 
-        initialize: function() {
+        initialize: function(args) {
             this.collection.on("sync", this.renderGames, this);
+            this.userData = args.userData;
         },
 
         close: function() {
