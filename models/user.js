@@ -3,10 +3,10 @@ var mongoose = require("mongoose"),
 
 var UserSchema = new Schema({
     username: String,
-    gamesWatched: {
+    gamesWatched: [{
         sport: String,
         gameTimeUTC: Number
-    }
+    }]
 });
 
 mongoose.model("User", UserSchema);

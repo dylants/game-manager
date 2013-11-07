@@ -10,7 +10,14 @@ module.exports = function(app) {
             var sessionId = req.cookies[SESSION_COOKIE];
 
             if (sessionId) {
-                res.send(sessionId);
+                // verify it's a valid user
+                User.findById(sessionId, function(err, user) {
+                    if (user) {
+                        res.send(user);
+                    } else {
+                        res.send(404);
+                    }
+                });
             } else {
                 res.send(404);
             }
@@ -27,7 +34,7 @@ module.exports = function(app) {
             }
 
             User.findOne({
-                username: username
+                username: new RegExp(username, "i")
             }, function(err, user) {
                 if (err) {
                     console.error(err);

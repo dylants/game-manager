@@ -4,16 +4,18 @@ define([
     "jquery",
     "session-model",
     "session-view",
+    "user-model",
     "schedule-collection",
     "schedule-view"
-], function(Backbone, $, SessionModel, SessionView, ScheduleCollection, ScheduleView) {
+], function(Backbone, $, SessionModel, SessionView, UserModel, ScheduleCollection,
+    ScheduleView) {
     "use strict";
 
-    var sessionModel, sessionView, scheduleCollection, scheduleView;
+    var sessionModel, sessionView, userModel, scheduleCollection, scheduleView;
 
     var Router = Backbone.Router.extend({
         routes: {
-            "": "landing",
+            "": "validateSession",
             "login": "login",
             "nhl/schedule": "nhlSchedule",
             "*invalidRoute": "badRoute"
@@ -23,7 +25,32 @@ define([
             this.on("route", this.routeCalled, this);
         },
 
-        routeCalled: function() {
+        before: function(route, params) {
+            if (!sessionModel) {
+                sessionModel = new SessionModel();
+            }
+            var that = this;
+            $.when(
+                sessionModel.fetch()
+            ).done(
+                function() {
+                    // TODO Really need to fix this...
+                    that.nhlSchedule();
+                    // Backbone.history.navigate(route, {
+                    //     trigger: true
+                    // });
+                }
+            ).fail(
+                function() {
+                    Backbone.history.navigate("login", {
+                        trigger: true
+                    });
+                }
+            );
+            return false;
+        },
+
+        routeCalled: function(routeCalled, args) {
             // scroll to the top of the window on every route call
             window.scrollTo(0, 0);
         },
@@ -40,7 +67,6 @@ define([
                 sessionView.close();
             }
 
-            sessionModel = new SessionModel();
             sessionView = new SessionView({
                 model: sessionModel
             });
@@ -52,11 +78,11 @@ define([
                 scheduleView.close();
             }
 
-            sessionModel = new SessionModel();
+            userModel = new UserModel([], sessionModel.get("_id"));
             scheduleCollection = new ScheduleCollection([], queryParams);
             scheduleView = new ScheduleView({
                 collection: scheduleCollection,
-                userData: sessionModel
+                userModel: userModel
             });
             scheduleView.render();
         },

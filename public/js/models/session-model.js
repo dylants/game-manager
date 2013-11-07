@@ -7,7 +7,6 @@ define([
     return Backbone.Model.extend({
         url: "/api/session",
 
-        initialize: function() {
-        }
+        initialize: function() {}
     });
 });

@@ -5,6 +5,8 @@ define([
     "router",
     // our app requires backbone query params
     "backbone.queryparams",
+    // and backbone route filter,
+    "backbone.routefilter",
     // our app requires moment
     "moment"
 ], function($, Backbone, Router) {

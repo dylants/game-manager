@@ -19,9 +19,6 @@ define([
             if (options && options.team) {
                 this.team = options.team;
             }
-
-            // fetch the game schedule
-            this.fetch();
         },
 
         getTeamName: function() {

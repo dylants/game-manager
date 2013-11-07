@@ -16,8 +16,7 @@ define([
             "click #login": "login"
         },
 
-        initialize: function() {
-        },
+        initialize: function() {},
 
         close: function() {
             // release all event listeners
@@ -32,17 +31,21 @@ define([
         },
 
         login: function(ev) {
-            var username;
+            var username, that;
 
             ev.preventDefault();
 
             username = this.$("input[name='username']").val();
 
-            this.model.save({
-                username: username
-            }, {
-                success: this.showLanding,
-                error: this.render
+            that = this;
+            $.when(
+                this.model.save({
+                    username: username
+                })
+            ).done(function() {
+                that.showLanding();
+            }).fail(function() {
+                that.render();
             });
         },
 
