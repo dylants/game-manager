@@ -20,3 +20,6 @@ h1, h2 {
 .original-time {
     font-weight: 100;
 }
+.watched-button {
+    margin-left: 1em;
+}

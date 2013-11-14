@@ -1,6 +1,9 @@
 <div class="game row" data-gameTimeUTC="<%- gameTimeUTC %>">
     <% var gameTimeMoment = moment(gameTimeUTC) %>
     <% var availableTimeMoment = moment(availableGameTimeUTC) %>
+    <div class="game-element col-md-1">
+        <%- sport %>
+    </div>
     <div class="game-element col-md-2">
         <% if (isBlackedOut) { %>
         <div class="original-time">
@@ -24,7 +27,10 @@
     <div class="game-element col-md-4">
         <%- awayTeamName %> at <%- homeTeamName %>
     </div>
-    <div class="game-element col-md-4">
-        <%- networks %>
+    <div class="game-element col-md-1">
+        <button class="btn btn-xs btn-info notes-button">Notes</button>
+    </div>
+    <div class="game-element col-md-2">
+        <button class="btn btn-xs btn-primary watched-button">Watched</button>
     </div>
 </div>

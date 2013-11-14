@@ -12,7 +12,8 @@ define([
         template: _.template(gameHtml),
 
         events: {
-            "click .game": "watchedGame"
+            "click .notes-button": "editNotes",
+            "click .watched-button": "watchedGame"
         },
 
         initialize: function(args) {
@@ -24,9 +25,17 @@ define([
             return this;
         },
 
+        editNotes: function(ev) {
+            ev.preventDefault();
+
+            console.log("edit notes!");
+        },
+
         watchedGame: function(ev) {
             var sportsWatched, i, nhlGamesWatched, gameTimeUTC, availableGameTimeUTC,
                 currentTime;
+
+            ev.preventDefault();
 
             sportsWatched = this.userModel.get("sportsWatched");
 
