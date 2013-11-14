@@ -3,24 +3,23 @@ define([
     "backbone",
     "underscore",
     "jquery",
+    "schedule-collection",
     "game-view",
     "game-model",
-    "text!/assets/templates/schedule.html"
-], function(Backbone, _, $, GameView, GameModel, scheduleHtml) {
+    "text!/assets/templates/games.html"
+], function(Backbone, _, $, ScheduleCollection, GameView, GameModel, gamesHtml) {
     "use strict";
 
     return Backbone.View.extend({
 
         el: "#main",
 
-        template: _.template(scheduleHtml),
+        template: _.template(gamesHtml),
 
         events: {},
 
         initialize: function(args) {
-            this.collection.on("sync", this.renderGames, this);
-            this.userModel = args.userModel;
-            this.userModel.on("sync", this.renderGames, this);
+            this.model.on("sync", this.loadGames, this);
         },
 
         close: function() {
@@ -30,18 +29,28 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template({
-                "team": this.collection.getTeamName()
-            }));
+            this.$el.html(this.template());
 
-            $.when(
-                this.collection.fetch(),
-                this.userModel.fetch()
-            ).done(
-                this.renderGames()
-            );
+            this.model.fetch();
 
             return this;
+        },
+
+        loadGames: function() {
+            var options;
+
+            options = {};
+            options.team = "blackhawks";
+            this.teamGames = new ScheduleCollection([], options);
+
+            var that = this;
+            $.when(
+                this.teamGames.fetch()
+            ).done(
+                function() {
+                    that.renderGames();
+                }
+            );
         },
 
         renderGames: function() {
@@ -57,21 +66,21 @@ define([
             availableGamesSelector.empty();
             futureGamesSelector.empty();
 
-            sportsWatched = this.userModel.get("sportsWatched");
+            sportsWatched = this.model.get("sportsWatched");
             currentTime = new Date();
             currentTime = currentTime.valueOf();
 
             that = this;
-            this.collection.each(function(game) {
+            this.teamGames.each(function(game) {
                 var gameView, gameTimeUTC, gamesWatched;
 
                 gameView = new GameView({
                     model: game,
-                    userModel: that.userModel
+                    userModel: that.model
                 });
 
                 gameTimeUTC = game.toJSON().gameTimeUTC;
-                gamesWatched = getGamesWatched(that.userModel.get("sportsWatched"), "NHL");
+                gamesWatched = getGamesWatched(that.model.get("sportsWatched"), "NHL");
                 // check to see if the user has seen this game already
                 if (hasGameBeenWatched(gameTimeUTC, gamesWatched)) {
                     archivedGamesSelector.append(gameView.render().el);

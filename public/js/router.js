@@ -5,19 +5,17 @@ define([
     "session-model",
     "session-view",
     "user-model",
-    "schedule-collection",
-    "schedule-view"
-], function(Backbone, $, SessionModel, SessionView, UserModel, ScheduleCollection,
-    ScheduleView) {
+    "games-view"
+], function(Backbone, $, SessionModel, SessionView, UserModel, GamesView) {
     "use strict";
 
-    var sessionModel, sessionView, userModel, scheduleCollection, scheduleView;
+    var sessionModel, sessionView, userModel, gamesView;
 
     var Router = Backbone.Router.extend({
         routes: {
             "": "validateSession",
             "login": "login",
-            "nhl/schedule": "nhlSchedule",
+            "games": "games",
             "*invalidRoute": "badRoute"
         },
 
@@ -43,7 +41,7 @@ define([
             ).done(
                 function() {
                     // TODO Really need to fix this...
-                    that.nhlSchedule();
+                    that.games();
                     // Backbone.history.navigate(route, {
                     //     trigger: true
                     // });
@@ -63,13 +61,6 @@ define([
             window.scrollTo(0, 0);
         },
 
-        landing: function() {
-            // by default, send them to the NHL schedule page
-            this.navigate("nhl/schedule", {
-                trigger: true
-            });
-        },
-
         login: function() {
             if (sessionView) {
                 sessionView.close();
@@ -81,18 +72,16 @@ define([
             sessionView.render();
         },
 
-        nhlSchedule: function(queryParams) {
-            if (scheduleView) {
-                scheduleView.close();
+        games: function(queryParams) {
+            if (gamesView) {
+                gamesView.close();
             }
 
             userModel = new UserModel([], sessionModel.get("_id"));
-            scheduleCollection = new ScheduleCollection([], queryParams);
-            scheduleView = new ScheduleView({
-                collection: scheduleCollection,
-                userModel: userModel
+            gamesView = new GamesView({
+                model: userModel
             });
-            scheduleView.render();
+            gamesView.render();
         },
 
         badRoute: function(invalidRoute) {
