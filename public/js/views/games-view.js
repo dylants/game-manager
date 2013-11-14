@@ -16,7 +16,9 @@ define([
 
         template: _.template(gamesHtml),
 
-        events: {},
+        events: {
+            "click #archived-games-header" : "toggleArchivedGames"
+        },
 
         initialize: function(args) {
             this.model.on("sync", this.loadGames, this);
@@ -101,6 +103,12 @@ define([
             });
 
             return this;
+        },
+
+        toggleArchivedGames: function(ev) {
+            ev.preventDefault();
+
+            $("#archived-games").toggle();
         }
     });
 });
