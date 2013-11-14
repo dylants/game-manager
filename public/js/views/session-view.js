@@ -43,14 +43,14 @@ define([
                     username: username
                 })
             ).done(function() {
-                that.showLanding();
+                that.showGames();
             }).fail(function() {
                 that.render();
             });
         },
 
-        showLanding: function() {
-            Backbone.history.navigate("nhl/schedule", {
+        showGames: function() {
+            Backbone.history.navigate("games", {
                 trigger: true
             });
         }

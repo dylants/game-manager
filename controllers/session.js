@@ -51,8 +51,21 @@ module.exports = function(app) {
                 } else {
                     console.log("user does not exist, creating...");
                     // the user does not exist, create it
+
+                    // TODO allow user to specify the teams, but until then
+                    // default the user to following the blackhawks and bulls
+                    var teams = [];
+                    teams.push({
+                        sport: "NHL",
+                        team: "blackhawks"
+                    });
+                    teams.push({
+                        sport: "NBA",
+                        team: "bulls"
+                    });
                     user = new User({
-                        username: username
+                        username: username,
+                        teams: teams
                     });
                     user.save(function(err, user) {
                         if (err) {

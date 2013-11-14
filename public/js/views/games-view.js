@@ -37,13 +37,20 @@ define([
         },
 
         loadGames: function() {
-            var options;
+            var options, teams, i, that;
 
             options = {};
-            options.team = "blackhawks";
+            teams = this.model.get("teams");
+            for (i=0; i<teams.length; i++) {
+                // only support NHL teams as of now
+                if (teams[i].sport === "NHL") {
+                    options.team = teams[i].team;
+                    break;
+                }
+            }
             this.teamGames = new ScheduleCollection([], options);
 
-            var that = this;
+            that = this;
             $.when(
                 this.teamGames.fetch()
             ).done(

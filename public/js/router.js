@@ -13,7 +13,7 @@ define([
 
     var Router = Backbone.Router.extend({
         routes: {
-            "": "validateSession",
+            "": "games",
             "login": "login",
             "games": "games",
             "*invalidRoute": "badRoute"

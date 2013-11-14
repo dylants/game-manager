@@ -19,11 +19,6 @@ define([
             if (options && options.team) {
                 this.team = options.team;
             }
-        },
-
-        getTeamName: function() {
-            // capitalize the first letter of the team name
-            return this.team.charAt(0).toUpperCase() + this.team.slice(1);
         }
 
     });

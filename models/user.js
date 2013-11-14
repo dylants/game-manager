@@ -3,6 +3,10 @@ var mongoose = require("mongoose"),
 
 var UserSchema = new Schema({
     username: String,
+    teams: [{
+        sport: String,
+        team: String
+    }],
     sportsWatched: [{
         sport: String,
         gamesWatched: Array
