@@ -10,6 +10,72 @@ define([
 ], function(Backbone, _, $, ScheduleCollection, GameView, GameModel, gamesHtml) {
     "use strict";
 
+    var renderGames = function(games, sportsWatched, sport) {
+        var archivedGamesSelector, availableGamesSelector, futureGamesSelector,
+            currentTime, gamesWatched, that;
+
+        archivedGamesSelector = $("#archived-games");
+        availableGamesSelector = $("#available-games");
+        futureGamesSelector = $("#future-games");
+
+        // clear the existing games
+        archivedGamesSelector.empty();
+        availableGamesSelector.empty();
+        futureGamesSelector.empty();
+
+        currentTime = new Date();
+        currentTime = currentTime.valueOf();
+
+        gamesWatched = getGamesWatched(sportsWatched, sport);
+        games.each(function(game) {
+            var gameView, gameJSON;
+
+            gameView = new GameView({
+                model: game
+            });
+
+            gameJSON = game.toJSON();
+            // check to see if the user has seen this game already
+            if (findWatchedGame(gameJSON._id, gamesWatched)) {
+                archivedGamesSelector.append(gameView.render().el);
+            } else {
+                if (currentTime > gameJSON.availableGameTimeUTC) {
+                    availableGamesSelector.append(gameView.render().el);
+                } else {
+                    futureGamesSelector.append(gameView.render().el);
+                }
+            }
+        });
+    };
+
+    var getGamesWatched = function(sportsWatched, sport) {
+        var gamesWatched, i;
+
+        gamesWatched = [];
+        if (sportsWatched && sportsWatched.length > 0) {
+            for (i = 0; i < sportsWatched.length; i++) {
+                if (sportsWatched[i].sport === sport) {
+                    gamesWatched = sportsWatched[i].games;
+                    break;
+                }
+            }
+        }
+
+        return gamesWatched;
+    };
+
+    var findWatchedGame = function(gameId, gamesWatched) {
+        var i;
+
+        for (i = 0; i < gamesWatched.length; i++) {
+            if (gamesWatched[i].game === gameId) {
+                return gamesWatched[i];
+            }
+        }
+        return null;
+    };
+
+
     return Backbone.View.extend({
 
         el: "#main",
@@ -17,10 +83,12 @@ define([
         template: _.template(gamesHtml),
 
         events: {
-            "click #archived-games-header" : "toggleArchivedGames"
+            "click #archived-games-header": "toggleArchivedGames"
         },
 
         initialize: function(args) {
+            Backbone.on("game-marked-as-watched", this.markedGameAsWatched, this);
+            Backbone.on("game-edit", this.editGame, this);
             this.model.on("sync", this.loadGames, this);
         },
 
@@ -39,70 +107,69 @@ define([
         },
 
         loadGames: function() {
-            var options, teams, i, that;
+            var options, teams, i, games, sportsWatched;
 
             options = {};
             teams = this.model.get("teams");
-            for (i=0; i<teams.length; i++) {
+            for (i = 0; i < teams.length; i++) {
                 // only support NHL teams as of now
                 if (teams[i].sport === "NHL") {
                     options.team = teams[i].team;
                     break;
                 }
             }
-            this.teamGames = new ScheduleCollection([], options);
+            games = new ScheduleCollection([], options);
+            sportsWatched = this.model.get("sportsWatched");
 
-            that = this;
             $.when(
-                this.teamGames.fetch()
+                games.fetch()
             ).done(
                 function() {
-                    that.renderGames();
+                    renderGames(games, sportsWatched, "NHL");
                 }
             );
         },
 
-        renderGames: function() {
-            var archivedGamesSelector, availableGamesSelector, futureGamesSelector,
-                sportsWatched, gamesWatched, currentTime, that;
+        editGame: function(game) {
+            console.log("edit game!");
+        },
 
-            archivedGamesSelector = $("#archived-games");
-            availableGamesSelector = $("#available-games");
-            futureGamesSelector = $("#future-games");
+        markedGameAsWatched: function(game) {
+            var sportsWatched, i, games, watchedGame;
 
-            // clear the existing games
-            archivedGamesSelector.empty();
-            availableGamesSelector.empty();
-            futureGamesSelector.empty();
+            console.log("watched game!");
 
             sportsWatched = this.model.get("sportsWatched");
-            currentTime = new Date();
-            currentTime = currentTime.valueOf();
 
-            that = this;
-            this.teamGames.each(function(game) {
-                var gameView, gameTimeUTC, gamesWatched;
-
-                gameView = new GameView({
-                    model: game,
-                    userModel: that.model
-                });
-
-                gameTimeUTC = game.toJSON().gameTimeUTC;
-                gamesWatched = getGamesWatched(that.model.get("sportsWatched"), "NHL");
-                // check to see if the user has seen this game already
-                if (hasGameBeenWatched(gameTimeUTC, gamesWatched)) {
-                    archivedGamesSelector.append(gameView.render().el);
-                } else {
-                    if (currentTime > game.toJSON().availableGameTimeUTC) {
-                        availableGamesSelector.append(gameView.render().el);
-                    } else {
-                        futureGamesSelector.append(gameView.render().el);
-                    }
+            for (i = 0; i < sportsWatched.length; i++) {
+                if (sportsWatched[i].sport === game.sport) {
+                    games = sportsWatched[i].games;
+                    break;
                 }
-            });
+            }
+            if (!games) {
+                sportsWatched.push({
+                    sport: game.sport,
+                    games: []
+                });
+                games = sportsWatched[sportsWatched.length - 1].games;
+            }
 
-            return this;
+            // add or edit?
+            watchedGame = findWatchedGame(game._id, games);
+            if (watchedGame) {
+                // edit the existing game
+                watchedGame.completed = true;
+                this.model.save();
+            } else {
+                // add the game
+                games.push({
+                    game: game._id,
+                    notes: null,
+                    completed: true
+                });
+                this.model.save();
+            }
         },
 
         toggleArchivedGames: function(ev) {
@@ -111,31 +178,5 @@ define([
             $("#archived-games").toggle();
         }
     });
+
 });
-
-var getGamesWatched = function(sportsWatched, sport) {
-    var gamesWatched;
-
-    gamesWatched = [];
-    if (sportsWatched && sportsWatched.length > 0) {
-        for (i = 0; i < sportsWatched.length; i++) {
-            if (sportsWatched[i].sport === sport) {
-                gamesWatched = sportsWatched[i].gamesWatched;
-                break;
-            }
-        }
-    }
-
-    return gamesWatched;
-};
-
-var hasGameBeenWatched = function(gameTimeUTC, gamesWatched) {
-    var i;
-
-    for (i = 0; i < gamesWatched.length; i++) {
-        if (gamesWatched[i] === gameTimeUTC) {
-            return true;
-        }
-    }
-    return false;
-};

@@ -2,9 +2,8 @@
 define([
     "backbone",
     "underscore",
-    "user-model",
     "text!/assets/templates/game.html"
-], function(Backbone, _, UserModel, gameHtml) {
+], function(Backbone, _, gameHtml) {
     "use strict";
 
     return Backbone.View.extend({
@@ -16,9 +15,7 @@ define([
             "click .watched-button": "watchedGame"
         },
 
-        initialize: function(args) {
-            this.userModel = args.userModel;
-        },
+        initialize: function() {},
 
         render: function() {
             this.$el.html(this.template(this.model.toJSON()));
@@ -28,40 +25,22 @@ define([
         editNotes: function(ev) {
             ev.preventDefault();
 
-            console.log("edit notes!");
+            Backbone.trigger("game-edit", this.model.toJSON());
         },
 
         watchedGame: function(ev) {
-            var sportsWatched, i, nhlGamesWatched, gameTimeUTC, availableGameTimeUTC,
-                currentTime;
+            var game, availableGameTimeUTC, currentTime;
 
             ev.preventDefault();
 
-            sportsWatched = this.userModel.get("sportsWatched");
-
-            for (i = 0; i < sportsWatched.length; i++) {
-                if (sportsWatched[i].sport === "NHL") {
-                    nhlGamesWatched = sportsWatched[i].gamesWatched;
-                    break;
-                }
-            }
-            if (!nhlGamesWatched) {
-                sportsWatched.push({
-                    sport: "NHL",
-                    gamesWatched: []
-                });
-                nhlGamesWatched = sportsWatched[sportsWatched.length - 1].gamesWatched;
-            }
-
-            gameTimeUTC = (+this.model.get("gameTimeUTC"));
-            availableGameTimeUTC = (+this.model.get("availableGameTimeUTC"));
+            game = this.model.toJSON();
+            availableGameTimeUTC = (+game.availableGameTimeUTC);
             currentTime = new Date();
             currentTime = currentTime.valueOf();
-            // only add the game if it's not already there && it is available
-            if ((nhlGamesWatched.indexOf(gameTimeUTC) === -1) &&
-                (currentTime > availableGameTimeUTC)) {
-                nhlGamesWatched.push(gameTimeUTC);
-                this.userModel.save();
+
+            // only trigger the event if the game is an available game
+            if (currentTime > availableGameTimeUTC) {
+                Backbone.trigger("game-marked-as-watched", game);
             }
         }
     });

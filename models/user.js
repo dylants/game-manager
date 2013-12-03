@@ -1,5 +1,6 @@
 var mongoose = require("mongoose"),
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema,
+    Game = require("./game");
 
 var UserSchema = new Schema({
     username: String,
@@ -9,7 +10,14 @@ var UserSchema = new Schema({
     }],
     sportsWatched: [{
         sport: String,
-        gamesWatched: Array
+        games: [{
+            game: {
+                type: Schema.ObjectId,
+                ref: "Game"
+            },
+            notes: String,
+            completed: Boolean
+        }]
     }]
 });
 
