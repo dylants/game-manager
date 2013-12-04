@@ -18,11 +18,6 @@ define([
         availableGamesSelector = $("#available-games");
         futureGamesSelector = $("#future-games");
 
-        // clear the existing games
-        archivedGamesSelector.empty();
-        availableGamesSelector.empty();
-        futureGamesSelector.empty();
-
         currentTime = new Date();
         currentTime = currentTime.valueOf();
 
@@ -107,17 +102,30 @@ define([
         },
 
         loadGames: function() {
-            var options, teams, i, games, sportsWatched;
+            var archivedGamesSelector, availableGamesSelector, futureGamesSelector,
+                teams, i;
 
-            options = {};
+            archivedGamesSelector = $("#archived-games");
+            availableGamesSelector = $("#available-games");
+            futureGamesSelector = $("#future-games");
+
+            // clear the existing games
+            archivedGamesSelector.empty();
+            availableGamesSelector.empty();
+            futureGamesSelector.empty();
+
             teams = this.model.get("teams");
             for (i = 0; i < teams.length; i++) {
-                // only support NHL teams as of now
-                if (teams[i].sport === "NHL") {
-                    options.team = teams[i].team;
-                    break;
-                }
+                this.loadTeamGames(teams[i].sport, teams[i].team);
             }
+        },
+
+        loadTeamGames: function(sport, team) {
+            var options, games, sportsWatched;
+
+            options = {};
+            options.sport = sport;
+            options.team = team;
             games = new ScheduleCollection([], options);
             sportsWatched = this.model.get("sportsWatched");
 
@@ -125,7 +133,7 @@ define([
                 games.fetch()
             ).done(
                 function() {
-                    renderGames(games, sportsWatched, "NHL");
+                    renderGames(games, sportsWatched, options.sport);
                 }
             );
         },
