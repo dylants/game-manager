@@ -160,3 +160,166 @@ nhl:
             mascot: "Capitals"
             conference: "Eastern"
             division: "Metropolitan"
+# ==========
+# NBA Config
+# ==========
+nba:
+    teams:
+        # ==== EASTERN ====
+        # Atlantic
+        -
+            city: "Boston"
+            mascot: "Celtics"
+            conference: "Eastern"
+            division: "Atlantic"
+        - 
+            city: "Brooklyn"
+            mascot: "Nets"
+            conference: "Eastern"
+            division: "Atlantic"
+        - 
+            city: "New York"
+            mascot: "Knicks"
+            conference: "Eastern"
+            division: "Atlantic"
+        - 
+            city: "Philadelphia"
+            mascot: "76ers"
+            conference: "Eastern"
+            division: "Atlantic"
+        - 
+            city: "Toronto"
+            mascot: "Raptors"
+            conference: "Eastern"
+            division: "Atlantic"
+        # Central
+        -
+            city: "Chicago"
+            mascot: "Bulls"
+            conference: "Eastern"
+            division: "Central"
+        -
+            city: "Cleveland"
+            mascot: "Cavaliers"
+            conference: "Eastern"
+            division: "Central"
+        -
+            city: "Detroit"
+            mascot: "Pistons"
+            conference: "Eastern"
+            division: "Central"
+        -
+            city: "Indiana"
+            mascot: "Pacers"
+            conference: "Eastern"
+            division: "Central"
+        -
+            city: "Milwaukee"
+            mascot: "Bucks"
+            conference: "Eastern"
+            division: "Central"
+        # Southeast
+        -
+            city: "Atlanta"
+            mascot: "Hawks"
+            conference: "Eastern"
+            division: "Southeast"
+        -
+            city: "Charlotte"
+            mascot: "Bobcats"
+            conference: "Eastern"
+            division: "Southeast"
+        -
+            city: "Miami"
+            mascot: "Heat"
+            conference: "Eastern"
+            division: "Southeast"
+        -
+            city: "Orlando"
+            mascot: "Magic"
+            conference: "Eastern"
+            division: "Southeast"
+        -
+            city: "Washington"
+            mascot: "Wizards"
+            conference: "Eastern"
+            division: "Southeast"
+        # ==== WESTERN ====
+        # Southwest
+        -
+            city: "Dallas"
+            mascot: "Mavericks"
+            conference: "Western"
+            division: "Southwest"
+        -
+            city: "Houston"
+            mascot: "Rockets"
+            conference: "Western"
+            division: "Southwest"
+        -
+            city: "Memphis"
+            mascot: "Grizzlies"
+            conference: "Western"
+            division: "Southwest"
+        -
+            city: "New Orleans"
+            mascot: "Pelicans"
+            conference: "Western"
+            division: "Southwest"
+        -
+            city: "San Antonio"
+            mascot: "Spurs"
+            conference: "Western"
+            division: "Southwest"
+        # Northwest
+        -
+            city: "Denver"
+            mascot: "Nuggets"
+            conference: "Western"
+            division: "Northwest"
+        -
+            city: "Minnesota"
+            mascot: "Timberwolves"
+            conference: "Western"
+            division: "Northwest"
+        -
+            city: "Portland"
+            mascot: "Trail Blazers"
+            conference: "Western"
+            division: "Northwest"
+        -
+            city: "Oklahoma City"
+            mascot: "Thunder"
+            conference: "Western"
+            division: "Northwest"
+        -
+            city: "Utah"
+            mascot: "Jazz"
+            conference: "Western"
+            division: "Northwest"
+        # Pacific
+        -
+            city: "Golden State"
+            mascot: "Warriors"
+            conference: "Western"
+            division: "Pacific"
+        -
+            city: "Los Angeles"
+            mascot: "Clippers"
+            conference: "Western"
+            division: "Pacific"
+        -
+            city: "Los Angeles"
+            mascot: "Lakers"
+            conference: "Western"
+            division: "Pacific"
+        -
+            city: "Phoenix"
+            mascot: "Suns"
+            conference: "Western"
+            division: "Pacific"
+        -
+            city: "Sacramento"
+            mascot: "Kings"
+            conference: "Western"
+            division: "Pacific"
