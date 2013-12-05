@@ -10,67 +10,6 @@ define([
 ], function(Backbone, _, $, ScheduleCollection, GameView, GameModel, gamesHtml) {
     "use strict";
 
-    var renderGames = function(games, sportsWatched, sport) {
-        var archivedGamesSelector, availableGamesSelector, futureGamesSelector,
-            currentTime, gamesWatched, that;
-
-        archivedGamesSelector = $("#archived-games");
-        availableGamesSelector = $("#available-games");
-        futureGamesSelector = $("#future-games");
-
-        currentTime = new Date();
-        currentTime = currentTime.valueOf();
-
-        gamesWatched = getGamesWatched(sportsWatched, sport);
-        games.each(function(game) {
-            var gameView, gameJSON;
-
-            gameView = new GameView({
-                model: game
-            });
-
-            gameJSON = game.toJSON();
-            // check to see if the user has seen this game already
-            if (findWatchedGame(gameJSON._id, gamesWatched)) {
-                archivedGamesSelector.append(gameView.render().el);
-            } else {
-                if (currentTime > gameJSON.availableGameTimeUTC) {
-                    availableGamesSelector.append(gameView.render().el);
-                } else {
-                    futureGamesSelector.append(gameView.render().el);
-                }
-            }
-        });
-    };
-
-    var getGamesWatched = function(sportsWatched, sport) {
-        var gamesWatched, i;
-
-        gamesWatched = [];
-        if (sportsWatched && sportsWatched.length > 0) {
-            for (i = 0; i < sportsWatched.length; i++) {
-                if (sportsWatched[i].sport === sport) {
-                    gamesWatched = sportsWatched[i].games;
-                    break;
-                }
-            }
-        }
-
-        return gamesWatched;
-    };
-
-    var findWatchedGame = function(gameId, gamesWatched) {
-        var i;
-
-        for (i = 0; i < gamesWatched.length; i++) {
-            if (gamesWatched[i].game === gameId) {
-                return gamesWatched[i];
-            }
-        }
-        return null;
-    };
-
-
     return Backbone.View.extend({
 
         el: "#main",
@@ -84,7 +23,11 @@ define([
         initialize: function(args) {
             Backbone.on("game-marked-as-watched", this.markedGameAsWatched, this);
             Backbone.on("game-edit", this.editGame, this);
-            this.model.on("sync", this.loadGames, this);
+
+            // used to determine if all games have been loaded
+            this.teamGamesLoaded = 0;
+            this.gamesLoaded = [];
+            this.totalTeams = 0;
         },
 
         close: function() {
@@ -94,9 +37,18 @@ define([
         },
 
         render: function() {
+            var that;
+
             this.$el.html(this.template());
 
-            this.model.fetch();
+            that = this;
+            $.when(
+                this.model.fetch()
+            ).done(
+                function() {
+                    that.loadGames();
+                }
+            );
 
             return this;
         },
@@ -114,6 +66,11 @@ define([
             availableGamesSelector.empty();
             futureGamesSelector.empty();
 
+            // reset the team games loaded
+            this.teamGamesLoaded = 0;
+            this.gamesLoaded = [];
+            this.totalTeams = this.model.get("teams").length;
+
             teams = this.model.get("teams");
             for (i = 0; i < teams.length; i++) {
                 this.loadTeamGames(teams[i].sport, teams[i].team);
@@ -121,7 +78,7 @@ define([
         },
 
         loadTeamGames: function(sport, team) {
-            var options, games, sportsWatched;
+            var options, games, sportsWatched, that;
 
             options = {};
             options.sport = sport;
@@ -129,13 +86,98 @@ define([
             games = new ScheduleCollection([], options);
             sportsWatched = this.model.get("sportsWatched");
 
+            that = this;
             $.when(
                 games.fetch()
             ).done(
                 function() {
-                    renderGames(games, sportsWatched, options.sport);
+                    that.doneLoadedGames(games);
                 }
             );
+        },
+
+        doneLoadedGames: function(loadedGames) {
+            this.teamGamesLoaded++;
+            this.gamesLoaded = this.gamesLoaded.concat(loadedGames.models);
+            if (this.teamGamesLoaded >= this.totalTeams) {
+                this.renderGames();
+            }
+        },
+
+        renderGames: function() {
+            var archivedGamesSelector, availableGamesSelector, futureGamesSelector,
+                currentTime, i, game, gameView, gameJSON;
+
+            archivedGamesSelector = $("#archived-games");
+            availableGamesSelector = $("#available-games");
+            futureGamesSelector = $("#future-games");
+
+            currentTime = new Date();
+            currentTime = currentTime.valueOf();
+
+            this.gamesLoaded.sort(function(a, b) {
+                var gameA, gameB;
+
+                gameA = a.toJSON();
+                gameB = b.toJSON();
+
+                if (gameA.availableGameTimeUTC > gameB.availableGameTimeUTC) {
+                    return 1;
+                } else if (gameB.availableGameTimeUTC > gameA.availableGameTimeUTC) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
+
+            for (i=0; i<this.gamesLoaded.length; i++) {
+                game = this.gamesLoaded[i];
+
+                gameView = new GameView({
+                    model: game
+                });
+
+                gameJSON = game.toJSON();
+                // check to see if the user has seen this game already
+                if (this.findWatchedGame(gameJSON)) {
+                    archivedGamesSelector.append(gameView.render().el);
+                } else {
+                    if (currentTime > gameJSON.availableGameTimeUTC) {
+                        availableGamesSelector.append(gameView.render().el);
+                    } else {
+                        futureGamesSelector.append(gameView.render().el);
+                    }
+                }
+            }
+        },
+
+        getGamesWatched: function(sport) {
+            var gamesWatched, sportsWatched, i;
+
+            gamesWatched = [];
+            sportsWatched = this.model.get("sportsWatched");
+            if (sportsWatched && sportsWatched.length > 0) {
+                for (i = 0; i < sportsWatched.length; i++) {
+                    if (sportsWatched[i].sport === sport) {
+                        gamesWatched = sportsWatched[i].games;
+                        break;
+                    }
+                }
+            }
+
+            return gamesWatched;
+        },
+
+        findWatchedGame: function(game) {
+            var gamesWatched, i;
+
+            gamesWatched = this.getGamesWatched(game.sport);
+            for (i = 0; i < gamesWatched.length; i++) {
+                if (gamesWatched[i].game === game._id) {
+                    return gamesWatched[i];
+                }
+            }
+            return null;
         },
 
         editGame: function(game) {
@@ -164,7 +206,7 @@ define([
             }
 
             // add or edit?
-            watchedGame = findWatchedGame(game._id, games);
+            watchedGame = this.findWatchedGame(game);
             if (watchedGame) {
                 // edit the existing game
                 watchedGame.completed = true;

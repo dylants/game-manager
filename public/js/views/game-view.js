@@ -41,6 +41,9 @@ define([
             // only trigger the event if the game is an available game
             if (currentTime > availableGameTimeUTC) {
                 Backbone.trigger("game-marked-as-watched", game);
+
+                // and move the element to archived
+                $(this.el).appendTo("#archived-games");
             }
         }
     });
