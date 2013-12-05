@@ -22,7 +22,7 @@ define([
 
         initialize: function(args) {
             Backbone.on("game-marked-as-watched", this.markedGameAsWatched, this);
-            Backbone.on("game-edit", this.editGame, this);
+            Backbone.on("game-notes", this.setNoteForGame, this);
 
             // used to determine if all games have been loaded
             this.teamGamesLoaded = 0;
@@ -106,14 +106,7 @@ define([
 
         renderGames: function() {
             var archivedGamesSelector, availableGamesSelector, futureGamesSelector,
-                currentTime, i, game, gameView, gameJSON;
-
-            archivedGamesSelector = $("#archived-games");
-            availableGamesSelector = $("#available-games");
-            futureGamesSelector = $("#future-games");
-
-            currentTime = new Date();
-            currentTime = currentTime.valueOf();
+                currentTime, i, game, gameView, gameJSON, watchedGame, gameState;
 
             this.gamesLoaded.sort(function(a, b) {
                 var gameA, gameB;
@@ -130,23 +123,47 @@ define([
                 }
             });
 
+            currentTime = new Date();
+            currentTime = currentTime.valueOf();
+
+            archivedGamesSelector = $("#archived-games");
+            availableGamesSelector = $("#available-games");
+            futureGamesSelector = $("#future-games");
+
             for (i=0; i<this.gamesLoaded.length; i++) {
                 game = this.gamesLoaded[i];
 
-                gameView = new GameView({
-                    model: game
-                });
-
                 gameJSON = game.toJSON();
                 // check to see if the user has seen this game already
-                if (this.findWatchedGame(gameJSON)) {
-                    archivedGamesSelector.append(gameView.render().el);
+                watchedGame = this.findWatchedGame(gameJSON);
+                if (watchedGame && watchedGame.completed) {
+                    gameState = "archived";
                 } else {
                     if (currentTime > gameJSON.availableGameTimeUTC) {
-                        availableGamesSelector.append(gameView.render().el);
+                        gameState = "available";
                     } else {
-                        futureGamesSelector.append(gameView.render().el);
+                        gameState = "future";
                     }
+                }
+
+                gameView = new GameView({
+                    model: game,
+                    gameState: gameState,
+                    notes: watchedGame ? watchedGame.notes : ""
+                });
+
+                switch (gameState) {
+                    case "archived":
+                        archivedGamesSelector.append(gameView.render().el);
+                        break;
+                    case "available":
+                        availableGamesSelector.append(gameView.render().el);
+                        break;
+                    case "future":
+                        futureGamesSelector.append(gameView.render().el);
+                        break;
+                    default:
+                        console.error("unknown gameState: " + gameState);
                 }
             }
         },
@@ -154,7 +171,6 @@ define([
         getGamesWatched: function(sport) {
             var gamesWatched, sportsWatched, i;
 
-            gamesWatched = [];
             sportsWatched = this.model.get("sportsWatched");
             if (sportsWatched && sportsWatched.length > 0) {
                 for (i = 0; i < sportsWatched.length; i++) {
@@ -163,6 +179,13 @@ define([
                         break;
                     }
                 }
+            }
+            if (!gamesWatched) {
+                sportsWatched.push({
+                    sport: sport,
+                    games: []
+                });
+                gamesWatched = sportsWatched[sportsWatched.length - 1].games;
             }
 
             return gamesWatched;
@@ -180,30 +203,32 @@ define([
             return null;
         },
 
-        editGame: function(game) {
-            console.log("edit game!");
+        setNoteForGame: function(game, note) {
+            var gamesWatched, watchedGame;
+
+            gamesWatched = this.getGamesWatched(game.sport);
+
+            // add or edit?
+            watchedGame = this.findWatchedGame(game);
+            if (watchedGame) {
+                // edit the existing game
+                watchedGame.notes = note;
+                this.model.save();
+            } else {
+                // add the game
+                gamesWatched.push({
+                    game: game._id,
+                    notes: note,
+                    completed: false
+                });
+                this.model.save();
+            }
         },
 
         markedGameAsWatched: function(game) {
-            var sportsWatched, i, games, watchedGame;
+            var gamesWatched, watchedGame;
 
-            console.log("watched game!");
-
-            sportsWatched = this.model.get("sportsWatched");
-
-            for (i = 0; i < sportsWatched.length; i++) {
-                if (sportsWatched[i].sport === game.sport) {
-                    games = sportsWatched[i].games;
-                    break;
-                }
-            }
-            if (!games) {
-                sportsWatched.push({
-                    sport: game.sport,
-                    games: []
-                });
-                games = sportsWatched[sportsWatched.length - 1].games;
-            }
+            gamesWatched = this.getGamesWatched(game.sport);
 
             // add or edit?
             watchedGame = this.findWatchedGame(game);
@@ -213,7 +238,7 @@ define([
                 this.model.save();
             } else {
                 // add the game
-                games.push({
+                gamesWatched.push({
                     game: game._id,
                     notes: null,
                     completed: true

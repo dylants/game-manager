@@ -2,30 +2,54 @@
 define([
     "backbone",
     "underscore",
-    "text!/assets/templates/game.html"
-], function(Backbone, _, gameHtml) {
+    "text!/assets/templates/game.html",
+    "text!/assets/templates/game-notes.html"
+], function(Backbone, _, gameHtml, gameNotesHtml) {
     "use strict";
 
     return Backbone.View.extend({
 
         template: _.template(gameHtml),
+        templateNotes: _.template(gameNotesHtml),
 
         events: {
             "click .notes-button": "editNotes",
+            "click .update-notes-button": "updateNotes",
             "click .watched-button": "watchedGame"
         },
 
-        initialize: function() {},
+        initialize: function(options) {
+            this.gameState = options.gameState;
+            this.notes = options.notes;
+        },
 
         render: function() {
-            this.$el.html(this.template(this.model.toJSON()));
+            this.$el.html(this.template(_.extend({}, this.model.toJSON(), {
+                notes: this.notes,
+                gameState: this.gameState
+            })));
             return this;
         },
 
         editNotes: function(ev) {
             ev.preventDefault();
 
-            Backbone.trigger("game-edit", this.model.toJSON());
+            // replace the game information with the notes form
+            $(this.el).html(this.templateNotes({
+                notes: this.notes
+            }));
+        },
+
+        updateNotes: function(ev) {
+            ev.preventDefault();
+
+            this.notes = $("#note-value").val();
+            $("#note-value").val("");
+
+            // replace the notes form with the game information
+            this.render();
+
+            Backbone.trigger("game-notes", this.model.toJSON(), this.notes);
         },
 
         watchedGame: function(ev) {
@@ -42,8 +66,10 @@ define([
             if (currentTime > availableGameTimeUTC) {
                 Backbone.trigger("game-marked-as-watched", game);
 
-                // and move the element to archived
-                $(this.el).appendTo("#archived-games");
+                // set the game state as archived
+                this.gameState = "archived";
+                // re-render and move the element to archived
+                $(this.render().el).appendTo("#archived-games");
             }
         }
     });
