@@ -120,6 +120,7 @@ module.exports = function(app) {
                             count++;
                             // date, time, teams, location, description
                             nbaGameBuilder.buildNBAGame(
+                                app,
                                 nbaGameValues.date,
                                 nbaGameValues.time,
                                 nbaGameValues.teams,

@@ -5,13 +5,22 @@ var GameSchema = new Schema({
     sport: {
         type: String
     },
+    sportLogoHref: {
+        type: String
+    },
     gameTimeUTC: {
         type: Number
     },
     awayTeamName: {
         type: String
     },
+    awayTeamLogoHref: {
+        type: String
+    },
     homeTeamName: {
+        type: String
+    },
+    homeTeamLogoHref: {
         type: String
     },
     location: {

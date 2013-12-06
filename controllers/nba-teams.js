@@ -43,7 +43,8 @@ module.exports = function(app) {
                     mascot: teams[i].mascot,
                     sport: "NBA",
                     conference: teams[i].conference,
-                    division: teams[i].division
+                    division: teams[i].division,
+                    logoHref: teams[i].logoHref
                 });
                 team.save();
             }

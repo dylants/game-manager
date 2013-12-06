@@ -120,6 +120,7 @@ module.exports = function(app) {
                             count++;
                             // date, time, teams, location, networks
                             nhlGameBuilder.buildNHLGame(
+                                app,
                                 nhlGameValues.date,
                                 nhlGameValues.time,
                                 nhlGameValues.teams,

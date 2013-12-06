@@ -1,6 +1,82 @@
 var moment = require("moment"),
+    async = require("async"),
     mongoose = require("mongoose"),
-    Game = mongoose.model("Game");
+    Game = mongoose.model("Game"),
+    Team = mongoose.model("Team");
+
+/**
+ * Finds the logo href for the team sent in, searching for the Team
+ * 
+ * @param  {String}   teamName The name of the team to search for
+ * @param  {Function} callback Called when logo found, or error occurs
+ */
+var locateLogoHref = function(teamName, callback) {
+    // this team name could be the city, or a city/mascot mix
+    // so first look for the city match, then mascot loose match
+    Team.findOne({
+        sport: "NHL",
+        city: teamName
+    }, function(err, team) {
+        var looseMascot;
+
+        if (err) {
+            callback(err);
+            return;
+        } else if (team) {
+            callback(null, team.logoHref);
+            return;
+        } else {
+            // look for a loose match on the mascot
+            if (teamName.indexOf(".") > -1) {
+                looseMascot = teamName.slice(teamName.lastIndexOf(".") + 1);
+            } else if (teamName.indexOf(" ") > -1) {
+                looseMascot = teamName.slice(teamName.lastIndexOf(" ") + 1);
+            } else {
+                looseMascot = teamName;
+            }
+            Team.findOne({
+                sport: "NHL",
+                mascot: new RegExp(looseMascot, "i")
+            }, function(err, team) {
+                var looseCity;
+
+                if (err) {
+                    callback(err);
+                    return;
+                } else if (team) {
+                    callback(null, team.logoHref);
+                    return;
+                } else {
+                    // look for a loose match on the city
+                    if (teamName.indexOf(".") > -1) {
+                        looseCity = teamName.slice(teamName.lastIndexOf(".") + 1);
+                    } else if (teamName.indexOf(" ") > -1) {
+                        looseCity = teamName.slice(teamName.lastIndexOf(" ") + 1);
+                    } else {
+                        looseCity = teamName;
+                    }
+                    Team.findOne({
+                        sport: "NHL",
+                        city: new RegExp(looseCity, "i")
+                    }, function(err, team) {
+                        if (err) {
+                            callback(err);
+                            return;
+                        } else if (team) {
+                            callback(null, team.logoHref);
+                            return;
+                        } else {
+                            // failed to find logo...
+                            console.error("failed to find logo for teamName: " + teamName);
+                            callback(null, "");
+                            return;
+                        }
+                    });
+                }
+            });
+        }
+    });
+};
 
 /**
  * Removes the scores from the teams string (if it exists)
@@ -63,6 +139,7 @@ function NHLGameBuilder() {}
  * if it's blacked out. This will either create and save a new Game (if it doesn't exist
  * yet) or find and return the existing Game (if it already exists).
  *
+ * @param {Object} app      The application context
  * @param {String} date     The date the game was aired (or will air)
  * @param {String} time     The time the game will air
  * @param {String} teams    The teams that played, along with a score (if game
@@ -72,7 +149,7 @@ function NHLGameBuilder() {}
  * @param {String} callback Function called when game has been built with the signature:
  *                          callback(err, game)
  */
-NHLGameBuilder.prototype.buildNHLGame = function(date, time, teams, location, networks, callback) {
+NHLGameBuilder.prototype.buildNHLGame = function(app, date, time, teams, location, networks, callback) {
     var gameTimeUTC, teamsWithoutScores, isGameOver, whoWon, isBlackedOut,
         availableGameTimeUTC, teamsWithScores, team1, team1Score, team2, team2Score, game;
 
@@ -114,27 +191,73 @@ NHLGameBuilder.prototype.buildNHLGame = function(date, time, teams, location, ne
         availableGameTimeUTC = gameTimeUTC;
     }
 
-    // try to find the game if it already exists
-    Game.findOne({
-        sport: "NHL",
-        gameTimeUTC: gameTimeUTC,
-        awayTeamName: team1,
-        homeTeamName: team2,
-        location: location
-    }, function(err, game) {
-        if (err) {
-            // if an error exists, exit here
-            callback(err);
-        } else {
-            if (game) {
-                // if the game exists, check to see if it's now over (and wasn't before)
-                if (game.isGameOver !== isGameOver) {
-                    console.log("updating game: " + game.gameTimeUTC);
-                    // update the existing game
-                    game.awayTeamScore = team1Score;
-                    game.homeTeamScore = team2Score;
-                    game.isGameOver = isGameOver;
-                    game.winningTeamName = whoWon;
+    async.parallel([
+        // get the logos for each team
+        function(parallelCallback) {
+            locateLogoHref(team1, parallelCallback);
+        },
+        function(parallelCallback) {
+            locateLogoHref(team2, parallelCallback);
+        }
+    ], function(err, results) {
+        var awayTeamLogoHref, homeTeamLogoHref;
+
+        awayTeamLogoHref = results[0];
+        homeTeamLogoHref = results[1];
+
+        // try to find the game if it already exists
+        Game.findOne({
+            sport: "NHL",
+            gameTimeUTC: gameTimeUTC,
+            awayTeamName: team1,
+            homeTeamName: team2,
+            location: location
+        }, function(err, game) {
+            if (err) {
+                // if an error exists, exit here
+                callback(err);
+            } else {
+                if (game) {
+                    // if the game exists, check to see if it's now over (and wasn't before)
+                    if (game.isGameOver !== isGameOver) {
+                        console.log("updating game: " + game.gameTimeUTC);
+                        // update the existing game
+                        game.awayTeamScore = team1Score;
+                        game.homeTeamScore = team2Score;
+                        game.isGameOver = isGameOver;
+                        game.winningTeamName = whoWon;
+                        game.save(function(err, game) {
+                            if (err) {
+                                callback(err);
+                            } else {
+                                callback(null, game);
+                            }
+                        });
+                    } else {
+                        console.log("game already exists, returning game with time: " + game.gameTimeUTC);
+                        callback(null, game);
+                    }
+                } else {
+                    // create a new game
+                    console.log("game does not yet exist, creating game with time: " + gameTimeUTC);
+                    game = new Game({
+                        sport: "NHL",
+                        sportLogoHref: app.get("config").nhl.logoHref,
+                        gameTimeUTC: gameTimeUTC,
+                        awayTeamName: team1,
+                        awayTeamLogoHref: awayTeamLogoHref,
+                        homeTeamName: team2,
+                        homeTeamLogoHref: homeTeamLogoHref,
+                        location: location,
+                        awayTeamScore: team1Score,
+                        homeTeamScore: team2Score,
+                        isGameOver: isGameOver,
+                        winningTeamName: whoWon,
+                        networks: networks,
+                        isBlackedOut: isBlackedOut,
+                        availableGameTimeUTC: availableGameTimeUTC
+                    });
+                    // save the newly created game
                     game.save(function(err, game) {
                         if (err) {
                             callback(err);
@@ -142,37 +265,9 @@ NHLGameBuilder.prototype.buildNHLGame = function(date, time, teams, location, ne
                             callback(null, game);
                         }
                     });
-                } else {
-                    console.log("game already exists, returning game with time: " + game.gameTimeUTC);
-                    callback(null, game);
                 }
-            } else {
-                // create a new game
-                console.log("game does not yet exist, creating game with time: " + gameTimeUTC);
-                game = new Game({
-                    sport: "NHL",
-                    gameTimeUTC: gameTimeUTC,
-                    awayTeamName: team1,
-                    homeTeamName: team2,
-                    location: location,
-                    awayTeamScore: team1Score,
-                    homeTeamScore: team2Score,
-                    isGameOver: isGameOver,
-                    winningTeamName: whoWon,
-                    networks: networks,
-                    isBlackedOut: isBlackedOut,
-                    availableGameTimeUTC: availableGameTimeUTC
-                });
-                // save the newly created game
-                game.save(function(err, game) {
-                    if (err) {
-                        callback(err);
-                    } else {
-                        callback(null, game);
-                    }
-                });
             }
-        }
+        });
     });
 
 };

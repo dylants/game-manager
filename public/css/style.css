@@ -14,12 +14,34 @@ h1, h2 {
 .game:hover {
     background-color: rgb(235, 234, 230);
 }
-.game-element {
-    padding: 0 1em;
-}
 .original-time {
     font-weight: 100;
 }
-.watched-button {
-    margin-left: 1em;
+.team-logo {
+    height: 3em;
+}
+/* large */
+@media (min-width: 992px) {
+    .watched-button {
+        margin-left: 1em;
+    }
+    .sport-logo {
+        height: 3em;
+    }
+}
+/* small */
+@media (max-width: 992px) {
+    .game-element {
+        padding-left: 0em;
+    }
+    .notes-button, .watched-button {
+        margin-top: 0.5em;
+    }
+    .sport-logo {
+        width: 2em;
+        padding-bottom: 2em;
+    }
+    .sport-logo-div {
+        padding-right: 2.5em;
+    }
 }

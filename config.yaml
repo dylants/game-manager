@@ -3,6 +3,7 @@
 # NHL Config
 # ==========
 nhl:
+    logoHref: "http://cdn.nhl.com/images/default/nhl_shield.png"
     teams:
         # ==== WESTERN ====
         # Pacific
@@ -11,72 +12,86 @@ nhl:
             mascot: "Ducks"
             conference: "Western"
             division: "Pacific"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/ducks_logo.svgz"
         - 
             city: "Calgary"
             mascot: "Flames"
             conference: "Western"
             division: "Pacific"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/flames_dark_logo.svgz"
         - 
             city: "Edmonton"
             mascot: "Oilers"
             conference: "Western"
             division: "Pacific"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/oilers_logo.svgz"
         - 
             city: "Los Angeles"
             mascot: "Kings"
             conference: "Western"
             division: "Pacific"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/kings_dark_logo.svgz"
         - 
             city: "Phoenix"
             mascot: "Coyotes"
             conference: "Western"
             division: "Pacific"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/coyotes_logo.svgz"
         - 
             city: "San Jose"
             mascot: "Sharks"
             conference: "Western"
             division: "Pacific"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/sharks_logo.svgz"
         - 
             city: "Vancouver"
             mascot: "Canucks"
             conference: "Western"
             division: "Pacific"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/canucks_dark_logo.svgz"
         # Central
         - 
             city: "Chicago"
             mascot: "Blackhawks"
             conference: "Western"
             division: "Central"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/blackhawks_logo.svgz"
         - 
             city: "Colorado"
             mascot: "Avalanche"
             conference: "Western"
             division: "Central"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/avalanche_logo.svgz"
         - 
             city: "Dallas"
             mascot: "Stars"
             conference: "Western"
             division: "Central"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/stars_logo.svgz"
         - 
             city: "Minnesota"
             mascot: "Wild"
             conference: "Western"
             division: "Central"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/wild_logo.svgz"
         - 
             city: "Nashville"
             mascot: "Predators"
             conference: "Western"
             division: "Central"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/predators_logo.svgz"
         - 
             city: "St. Louis"
             mascot: "Blues"
             conference: "Western"
             division: "Central"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/blues_dark_logo.svgz"
         - 
             city: "Winnipeg"
             mascot: "Jets"
             conference: "Western"
             division: "Central"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/jets_logo.svgz"
         # ==== EASTERN ====
         # Atlantic
         - 
@@ -84,86 +99,103 @@ nhl:
             mascot: "Bruins"
             conference: "Eastern"
             division: "Atlantic"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/bruins_logo.svgz"
         - 
             city: "Buffalo"
             mascot: "Sabres"
             conference: "Eastern"
             division: "Atlantic"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/sabres_logo.svgz"
         - 
             city: "Detroit"
             mascot: "Red Wings"
             conference: "Eastern"
             division: "Atlantic"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/redwings_logo.svgz"
         - 
             city: "Florida"
             mascot: "Panthers"
             conference: "Eastern"
             division: "Atlantic"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/panthers_logo.svgz"
         - 
             city: "Montreal"
             mascot: "Canadiens"
             conference: "Eastern"
             division: "Atlantic"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/canadiens_logo.svgz"
         - 
             city: "Ottawa"
             mascot: "Senators"
             conference: "Eastern"
             division: "Atlantic"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/senators_logo.svgz"
         - 
             city: "Tampa Bay"
             mascot: "Lightning"
             conference: "Eastern"
             division: "Atlantic"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/lightning_dark_logo.svgz"
         - 
             city: "Toronto"
             mascot: "Maple Leafs"
             conference: "Eastern"
             division: "Atlantic"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/mapleleafs_dark_logo.svgz"
         # Metropolitan
         - 
             city: "Carolina"
             mascot: "Hurricanes"
             conference: "Eastern"
             division: "Metropolitan"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/hurricanes_logo.svgz"
         - 
             city: "Columbus"
             mascot: "Blue Jackets"
             conference: "Eastern"
             division: "Metropolitan"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/bluejackets_logo.svgz"
         - 
             city: "New Jersey"
             mascot: "Devils"
             conference: "Eastern"
             division: "Metropolitan"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/devils_logo.svgz"
         - 
             city: "New York"
             mascot: "Islanders"
             conference: "Eastern"
             division: "Metropolitan"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/islanders_logo.svgz"
         - 
             city: "New York"
             mascot: "Rangers"
             conference: "Eastern"
             division: "Metropolitan"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/rangers_logo.svgz"
         - 
             city: "Philadelphia"
             mascot: "Flyers"
             conference: "Eastern"
             division: "Metropolitan"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/flyers_dark_logo.svgz"
         - 
             city: "Pittsburgh"
             mascot: "Penguins"
             conference: "Eastern"
             division: "Metropolitan"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/penguins_logo.svgz"
         - 
             city: "Washington"
             mascot: "Capitals"
             conference: "Eastern"
             division: "Metropolitan"
+            logoHref: "http://cdn.nhle.com/nhl/images/logos/teams/capitals_dark_logo.svgz"
 # ==========
 # NBA Config
 # ==========
 nba:
+    logoHref: "http://i.cdn.turner.com/nba/tmpl_asset/static/nba-cms3-desktop/1129/elements/themes/default/global/nba-logo.png"
     teams:
         # ==== EASTERN ====
         # Atlantic
@@ -172,78 +204,93 @@ nba:
             mascot: "Celtics"
             conference: "Eastern"
             division: "Atlantic"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/bos.gif"
         - 
             city: "Brooklyn"
             mascot: "Nets"
             conference: "Eastern"
             division: "Atlantic"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/nets.gif"
         - 
             city: "New York"
             mascot: "Knicks"
             conference: "Eastern"
             division: "Atlantic"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/nyk.gif"
         - 
             city: "Philadelphia"
             mascot: "76ers"
             conference: "Eastern"
             division: "Atlantic"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/phi.gif"
         - 
             city: "Toronto"
             mascot: "Raptors"
             conference: "Eastern"
             division: "Atlantic"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/raptors.gif"
         # Central
         -
             city: "Chicago"
             mascot: "Bulls"
             conference: "Eastern"
             division: "Central"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/chi.gif"
         -
             city: "Cleveland"
             mascot: "Cavaliers"
             conference: "Eastern"
             division: "Central"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/cavaliers.gif"
         -
             city: "Detroit"
             mascot: "Pistons"
             conference: "Eastern"
             division: "Central"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/pistons_80X64.gif"
         -
             city: "Indiana"
             mascot: "Pacers"
             conference: "Eastern"
             division: "Central"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/ind.gif"
         -
             city: "Milwaukee"
             mascot: "Bucks"
             conference: "Eastern"
             division: "Central"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/bucks.gif"
         # Southeast
         -
             city: "Atlanta"
             mascot: "Hawks"
             conference: "Eastern"
             division: "Southeast"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/hawks.gif"
         -
             city: "Charlotte"
             mascot: "Bobcats"
             conference: "Eastern"
             division: "Southeast"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/bobcats.gif"
         -
             city: "Miami"
             mascot: "Heat"
             conference: "Eastern"
             division: "Southeast"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/heat.gif"
         -
             city: "Orlando"
             mascot: "Magic"
             conference: "Eastern"
             division: "Southeast"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/magic.gif"
         -
             city: "Washington"
             mascot: "Wizards"
             conference: "Eastern"
             division: "Southeast"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/wizards.gif"
         # ==== WESTERN ====
         # Southwest
         -
@@ -251,75 +298,90 @@ nba:
             mascot: "Mavericks"
             conference: "Western"
             division: "Southwest"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/dal.gif"
         -
             city: "Houston"
             mascot: "Rockets"
             conference: "Western"
             division: "Southwest"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/rockets.gif"
         -
             city: "Memphis"
             mascot: "Grizzlies"
             conference: "Western"
             division: "Southwest"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/mem.gif"
         -
             city: "New Orleans"
             mascot: "Pelicans"
             conference: "Western"
             division: "Southwest"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/pelicans.gif"
         -
             city: "San Antonio"
             mascot: "Spurs"
             conference: "Western"
             division: "Southwest"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/spurs.gif"
         # Northwest
         -
             city: "Denver"
             mascot: "Nuggets"
             conference: "Western"
             division: "Northwest"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/nuggets.gif"
         -
             city: "Minnesota"
             mascot: "Timberwolves"
             conference: "Western"
             division: "Northwest"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/min.gif"
         -
             city: "Portland"
             mascot: "Trail Blazers"
             conference: "Western"
             division: "Northwest"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/por.gif"
         -
             city: "Oklahoma City"
             mascot: "Thunder"
             conference: "Western"
             division: "Northwest"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/okc.gif"
         -
             city: "Utah"
             mascot: "Jazz"
             conference: "Western"
             division: "Northwest"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/uth.gif"
         # Pacific
         -
             city: "Golden State"
             mascot: "Warriors"
             conference: "Western"
             division: "Pacific"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/warriors.gif"
         -
             city: "Los Angeles"
             mascot: "Clippers"
             conference: "Western"
             division: "Pacific"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/clippers.gif"
         -
             city: "Los Angeles"
             mascot: "Lakers"
             conference: "Western"
             division: "Pacific"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/lakers.gif"
         -
             city: "Phoenix"
             mascot: "Suns"
             conference: "Western"
             division: "Pacific"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/suns.gif"
         -
             city: "Sacramento"
             mascot: "Kings"
             conference: "Western"
             division: "Pacific"
+            logoHref: "http://i.cdn.turner.com/nba/nba/.element/img/1.0/logos/teamlogos_80x64/kings.gif"

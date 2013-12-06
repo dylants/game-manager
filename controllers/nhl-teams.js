@@ -43,7 +43,8 @@ module.exports = function(app) {
                     mascot: teams[i].mascot,
                     sport: "NHL",
                     conference: teams[i].conference,
-                    division: teams[i].division
+                    division: teams[i].division,
+                    logoHref: teams[i].logoHref
                 });
                 team.save();
             }

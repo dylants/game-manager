@@ -21,6 +21,9 @@ var TeamSchema = new Schema({
     division: {
         type: String
     },
+    logoHref: {
+        type: String
+    },
     schedule: [{type: mongoose.Schema.ObjectId, ref: "Game"}]
 });
 
