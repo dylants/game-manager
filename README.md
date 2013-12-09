@@ -1,3 +1,3 @@
 # game-manager #
 
-Provides information on NHL games, such as schedules, blackout dates, etc
+Provides a way to keep track of games available to watch, by tracking team schedules and blackout dates.
