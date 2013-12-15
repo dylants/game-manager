@@ -1,9 +1,11 @@
 body {
     background-color: rgb(245, 245, 245);
-    background-image: url("/assets/img/sandpaper.png");
+    background-image: url("/assets/img/tweed.png");
 }
 h1, h2 {
     text-align: center;
+    font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    color: rgb(213, 211, 211);
 }
 .game {
     padding: 1em;
@@ -21,16 +23,19 @@ h1, h2 {
     height: 3em;
 }
 /* large */
-@media (min-width: 992px) {
+ @media (min-width: 992px) {
     .watched-button {
         margin-left: 1em;
     }
     .sport-logo {
         height: 3em;
     }
+    .cancel-notes-button {
+        margin-left: 1em;
+    }
 }
 /* small */
-@media (max-width: 992px) {
+ @media (max-width: 992px) {
     .game-element {
         padding-left: 0em;
     }
@@ -43,5 +48,12 @@ h1, h2 {
     }
     .sport-logo-div {
         padding-right: 2.5em;
+    }
+    #note-value {
+        margin-left: 0.5em;
+    }
+    .game-notes-second-row {
+        margin-top: 1em;
+        margin-left: 4em;
     }
 }

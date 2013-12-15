@@ -15,6 +15,7 @@ define([
         events: {
             "click .notes-button": "editNotes",
             "click .update-notes-button": "updateNotes",
+            "click .cancel-notes-button": "cancelNotes",
             "click .watched-button": "watchedGame"
         },
 
@@ -50,6 +51,15 @@ define([
             this.render();
 
             Backbone.trigger("game-notes", this.model.toJSON(), this.notes);
+        },
+
+        cancelNotes: function(ev) {
+            ev.preventDefault();
+
+            $("#note-value").val("");
+
+            // replace the notes form with the game information
+            this.render();
         },
 
         watchedGame: function(ev) {
