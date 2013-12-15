@@ -1,7 +1,8 @@
 var mongoose = require("mongoose"),
     User = mongoose.model("User");
 
-var SESSION_COOKIE = "session_cookie";
+var SESSION_COOKIE = "game_manager_sc";
+var TEN_YEARS_MILLISECONDS = 1000 * 60 * 60 * 24 * 365 * 10;
 
 module.exports = function(app) {
     app.namespace("/api", function() {
@@ -46,7 +47,9 @@ module.exports = function(app) {
                     // the user already exists, just "log us in"
                     console.log("user already exists, logging in user");
 
-                    res.cookie(SESSION_COOKIE, user.id);
+                    res.cookie(SESSION_COOKIE, user.id, {
+                        expires: new Date(Date.now() + TEN_YEARS_MILLISECONDS)
+                    });
                     res.send(201, user);
                 } else {
                     console.log("user does not exist, creating...");
@@ -75,7 +78,9 @@ module.exports = function(app) {
                         }
                         console.log("created user");
                         // use this user as the session cookie
-                        res.cookie(SESSION_COOKIE, user.id);
+                        res.cookie(SESSION_COOKIE, user.id, {
+                            expires: new Date(Date.now() + TEN_YEARS_MILLISECONDS)
+                        });
                         res.send(201, user);
                     });
                 }
