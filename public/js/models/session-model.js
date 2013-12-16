@@ -5,7 +5,7 @@ define([
     "use strict";
 
     return Backbone.Model.extend({
-        url: "/api/session",
+        url: "/session",
 
         initialize: function() {}
     });

@@ -1,97 +1,42 @@
-var mongoose = require("mongoose"),
+var passport = require("passport"),
+    mongoose = require("mongoose"),
     User = mongoose.model("User");
 
-var SESSION_COOKIE = "game_manager_sc";
-var TEN_YEARS_MILLISECONDS = 1000 * 60 * 60 * 24 * 365 * 10;
-
 module.exports = function(app) {
-    app.namespace("/api", function() {
+    // returns the user if authenticated, else 401 (unauthorized)
+    app.get("/session", function(req, res) {
+        if (req.isAuthenticated()) {
+            res.send(req.user);
+        } else {
+            res.send(401);
+        }
+    });
 
-        app.get("/session", function(req, res) {
-            var sessionId = req.cookies[SESSION_COOKIE];
-
-            if (sessionId) {
-                // verify it's a valid user
-                User.findById(sessionId, function(err, user) {
-                    if (user) {
-                        res.send(user);
-                    } else {
-                        res.send(404);
-                    }
-                });
-            } else {
-                res.send(404);
+    // logs a user in via passport
+    app.post("/session", function(req, res, next) {
+        // calls passport's local strategy to authenticate
+        passport.authenticate("local", function(err, user, info) {
+            // if any problems exist, error out
+            if (err) {
+                return next(err);
             }
-        });
-
-        app.post("/session", function(req, res) {
-            var username;
-
-            // they should post the user name, try to find if it already exists
-            username = req.body.username;
-            if (!username) {
-                res.send(400);
-                return;
+            if (!user) {
+                return res.send(500, info.message);
             }
 
-            User.findOne({
-                username: new RegExp(username, "i")
-            }, function(err, user) {
+            // log in the user
+            req.logIn(user, function(err) {
                 if (err) {
-                    console.error(err);
-                    res.send(500, err);
-                    return;
+                    return next(err);
                 }
-
-                if (user) {
-                    // the user already exists, just "log us in"
-                    console.log("user already exists, logging in user");
-
-                    res.cookie(SESSION_COOKIE, user.id, {
-                        expires: new Date(Date.now() + TEN_YEARS_MILLISECONDS)
-                    });
-                    res.send(201, user);
-                } else {
-                    console.log("user does not exist, creating...");
-                    // the user does not exist, create it
-
-                    // TODO allow user to specify the teams, but until then
-                    // default the user to following the blackhawks and bulls
-                    var teams = [];
-                    teams.push({
-                        sport: "NHL",
-                        team: "blackhawks"
-                    });
-                    teams.push({
-                        sport: "NBA",
-                        team: "bulls"
-                    });
-                    user = new User({
-                        username: username,
-                        teams: teams
-                    });
-                    user.save(function(err, user) {
-                        if (err) {
-                            console.error(err);
-                            res.send(500, err);
-                            return;
-                        }
-                        console.log("created user");
-                        // use this user as the session cookie
-                        res.cookie(SESSION_COOKIE, user.id, {
-                            expires: new Date(Date.now() + TEN_YEARS_MILLISECONDS)
-                        });
-                        res.send(201, user);
-                    });
-                }
+                // once login succeeded, return the user and session created 201
+                return res.send(201, user);
             });
-        });
+        })(req, res, next);
+    });
 
-        app.delete("/session", function(req, res) {
-            // deleting the session means deleting the cookie
-            res.clearCookie(SESSION_COOKIE);
-            res.send(200);
-        });
-
+    app.delete("/session", function(req, res) {
+        req.logout();
+        res.send(200);
     });
 };

@@ -39,8 +39,11 @@ define([
 
             that = this;
             $.when(
+                // Even though we don't use passwords, this MUST include a password
+                // for passport compatibility. So send in a fake password.
                 this.model.save({
-                    username: username
+                    username: username,
+                    password: "password"
                 })
             ).done(function() {
                 that.showGames();
