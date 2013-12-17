@@ -22,6 +22,10 @@ h1, h2 {
 .team-logo {
     height: 3em;
 }
+.login-button-row {
+    text-align: center;
+    margin-top: 1em;
+}
 /* large */
  @media (min-width: 992px) {
     .watched-button {
