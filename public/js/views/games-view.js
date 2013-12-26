@@ -17,12 +17,16 @@ define([
         template: _.template(gamesHtml),
 
         events: {
+            "click #future-games-header": "toggleFutureGames",
             "click #archived-games-header": "toggleArchivedGames"
         },
 
         initialize: function(args) {
             Backbone.on("game-marked-as-watched", this.markedGameAsWatched, this);
             Backbone.on("game-notes", this.setNoteForGame, this);
+            Backbone.on("render-non-available-games", this.renderNonAvailableGames, this);
+
+            this.renderedNonAvailableGames = false;
         },
 
         close: function() {
@@ -32,21 +36,18 @@ define([
         },
 
         render: function() {
-            var archivedGamesSelector, availableGamesSelector, futureGamesSelector,
-                currentTime, i, games, game, gameState, gameView;
+            var availableGamesSelector, currentTime, i, games, game, gameState, gameView;
 
             this.$el.html(this.template());
 
             currentTime = new Date();
             currentTime = currentTime.valueOf();
 
-            archivedGamesSelector = $("#archived-games");
             availableGamesSelector = $("#available-games");
-            futureGamesSelector = $("#future-games");
 
             // iterate over the user's games
             games = this.model.get("games");
-            for (i=0; i<games.length; i++) {
+            for (i = 0; i < games.length; i++) {
                 game = games[i];
 
                 // check to see if the user has seen this game already
@@ -60,27 +61,60 @@ define([
                         gameState = "future";
                     }
                 }
+                // store the game state
+                game.gameState = gameState;
 
-                // create a game view with the information we've collected so far
-                gameView = new GameView({
-                    model: game,
-                    gameState: gameState,
-                    notes: game.notes || ""
-                });
+                // only render available games
+                if (gameState === "available") {
+                    // create a game view with the information we've collected so far
+                    gameView = new GameView({
+                        model: game,
+                        gameState: gameState,
+                        notes: game.notes || ""
+                    });
 
-                // based on the game state, put the game in the correct section
-                switch (gameState) {
-                    case "archived":
-                        archivedGamesSelector.append(gameView.render().el);
-                        break;
-                    case "available":
-                        availableGamesSelector.append(gameView.render().el);
-                        break;
-                    case "future":
-                        futureGamesSelector.append(gameView.render().el);
-                        break;
-                    default:
-                        console.error("unknown gameState: " + gameState);
+                    // and append it to the available games
+                    availableGamesSelector.append(gameView.render().el);
+                }
+            }
+
+            return this;
+        },
+
+        renderNonAvailableGames: function() {
+            var archivedGamesSelector, futureGamesSelector,
+                currentTime, i, games, game, gameView;
+
+            currentTime = new Date();
+            currentTime = currentTime.valueOf();
+
+            archivedGamesSelector = $("#archived-games");
+            futureGamesSelector = $("#future-games");
+
+            games = this.model.get("games");
+            // iterate again, this time for archived and future games
+            for (i = 0; i < games.length; i++) {
+                game = games[i];
+
+                if (game.gameState !== "available") {
+                    // create a game view with the information we've collected so far
+                    gameView = new GameView({
+                        model: game,
+                        gameState: game.gameState,
+                        notes: game.notes || ""
+                    });
+
+                    // based on the game state, put the game in the correct section
+                    switch (game.gameState) {
+                        case "archived":
+                            archivedGamesSelector.append(gameView.render().el);
+                            break;
+                        case "future":
+                            futureGamesSelector.append(gameView.render().el);
+                            break;
+                        default:
+                            console.error("unknown gameState: " + game.gameState);
+                    }
                 }
             }
         },
@@ -99,8 +133,24 @@ define([
             });
         },
 
+        toggleFutureGames: function(ev) {
+            ev.preventDefault();
+
+            if (!this.renderedNonAvailableGames) {
+                this.renderedNonAvailableGames = true;
+                Backbone.trigger("render-non-available-games");
+            }
+
+            $("#future-games").toggle();
+        },
+
         toggleArchivedGames: function(ev) {
             ev.preventDefault();
+
+            if (!this.renderedNonAvailableGames) {
+                this.renderedNonAvailableGames = true;
+                Backbone.trigger("render-non-available-games");
+            }
 
             $("#archived-games").toggle();
         }

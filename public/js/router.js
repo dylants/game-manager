@@ -89,7 +89,6 @@ define([
                     gamesView.render();
                 }
             );
-            gamesView.render();
         },
 
         badRoute: function(invalidRoute) {
