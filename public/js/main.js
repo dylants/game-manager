@@ -11,6 +11,7 @@ require.config({
         "schedule-collection": "/assets/js/models/schedule-collection",
         "session-model": "/assets/js/models/session-model",
         "user-model": "/assets/js/models/user-model",
+        "user-ui-data-model": "/assets/js/models/user-ui-data-model",
         "game-view": "/assets/js/views/game-view",
         "games-view": "/assets/js/views/games-view",
         "session-view": "/assets/js/views/session-view",

@@ -4,9 +4,9 @@ define([
     "jquery",
     "session-model",
     "session-view",
-    "user-model",
+    "user-ui-data-model",
     "games-view"
-], function(Backbone, $, SessionModel, SessionView, UserModel, GamesView) {
+], function(Backbone, $, SessionModel, SessionView, UserUiDataModel, GamesView) {
     "use strict";
 
     var sessionModel, sessionView, userModel, gamesView;
@@ -77,7 +77,7 @@ define([
                 gamesView.close();
             }
 
-            userModel = new UserModel([], sessionModel.get("_id"));
+            userModel = new UserUiDataModel([], sessionModel.get("_id"));
             gamesView = new GamesView({
                 model: userModel
             });

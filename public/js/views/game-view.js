@@ -25,7 +25,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template(_.extend({}, this.model.toJSON(), {
+            this.$el.html(this.template(_.extend({}, this.model, {
                 notes: this.notes,
                 gameState: this.gameState
             })));
@@ -50,7 +50,7 @@ define([
             // replace the notes form with the game information
             this.render();
 
-            Backbone.trigger("game-notes", this.model.toJSON(), this.notes);
+            Backbone.trigger("game-notes", this.model, this.notes);
         },
 
         cancelNotes: function(ev) {
@@ -67,7 +67,7 @@ define([
 
             ev.preventDefault();
 
-            game = this.model.toJSON();
+            game = this.model;
             availableGameTimeUTC = (+game.availableGameTimeUTC);
             currentTime = new Date();
             currentTime = currentTime.valueOf();
