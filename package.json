@@ -16,8 +16,8 @@
         "csv": "~0.3.6",
         "request": "~2.30.0",
         "express-namespace": "~0.1.1",
-        "mongoose": "~3.8.2",
-        "moment": "~2.4.0",
+        "mongoose": "~3.8.3",
+        "moment": "~2.5.0",
         "async": "~0.2.9",
         "js-yaml": "~3.0.0",
         "passport": "~0.1.17",
@@ -25,6 +25,6 @@
     },
     "devDependencies": {
         "grunt": "~0.4.1",
-        "grunt-contrib-jshint": "~0.7.2"
+        "grunt-contrib-jshint": "~0.8.0"
     }
 }
