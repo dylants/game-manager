@@ -32,26 +32,10 @@ define([
         },
 
         render: function() {
-            var that;
-
-            this.$el.html(this.template());
-
-            that = this;
-            // First, load the model. Then when done, call renderGames
-            $.when(
-                this.model.fetch()
-            ).done(
-                function() {
-                    that.renderGames();
-                }
-            );
-
-            return this;
-        },
-
-        renderGames: function() {
             var archivedGamesSelector, availableGamesSelector, futureGamesSelector,
                 currentTime, i, games, game, gameState, gameView;
+
+            this.$el.html(this.template());
 
             currentTime = new Date();
             currentTime = currentTime.valueOf();

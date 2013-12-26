@@ -81,6 +81,14 @@ define([
             gamesView = new GamesView({
                 model: userModel
             });
+            // First, load the model. Then when done, call render
+            $.when(
+                userModel.fetch()
+            ).done(
+                function() {
+                    gamesView.render();
+                }
+            );
             gamesView.render();
         },
 
