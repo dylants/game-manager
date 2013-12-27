@@ -92,6 +92,73 @@ module.exports = function(app) {
             });
         });
 
+        // PATCH to update our User with the View Model data
+        app.patch("/user-ui-data/:id", function(req, res) {
+            var watchedGame;
+
+            // pull the watched game from the request body
+            watchedGame = req.body.game;
+
+            // update the games watched with this watched game information
+            User.findById(req.params.id, function(err, user) {
+                var i, gamesWatched, existingGameWatched, foundMatch;
+
+                if (err) {
+                    console.error(err);
+                    res.send(500, {
+                        "error": err
+                    });
+                    return;
+                }
+
+                for (i = 0; i < user.sportsWatched.length; i++) {
+                    if (watchedGame.sport === user.sportsWatched[i].sport) {
+                        gamesWatched = user.sportsWatched[i].games;
+                        break;
+                    }
+                }
+
+                // if no games watched yet for this sport, create one
+                if (!gamesWatched) {
+                    gamesWatched = [];
+                    user.sportsWatched.push(gamesWatched);
+                }
+
+                // loop through the games watched looking for a matching game
+                for (i = 0; i < gamesWatched.length; i++) {
+                    if (watchedGame._id === gamesWatched[i].game.toJSON()) {
+                        foundMatch = true;
+                        break;
+                    }
+                }
+
+                if (foundMatch) {
+                    // if one already exists, update the existing game
+                    gamesWatched[i].notes = watchedGame.notes;
+                    gamesWatched[i].completed = watchedGame.completed;
+                } else {
+                    // else create a new one
+                    gamesWatched.push({
+                        game: watchedGame._id,
+                        notes: watchedGame.notes,
+                        completed: watchedGame.completed
+                    });
+                }
+
+                // save the updated game
+                user.save(function(err, user) {
+                    if (err) {
+                        console.error(err);
+                        res.send(500, {
+                            "error": err
+                        });
+                        return;
+                    }
+
+                    res.send(200);
+                });
+            });
+        });
     });
 };
 

@@ -134,6 +134,8 @@ define([
             game.notes = note;
             this.model.save({
                 game: game
+            }, {
+                patch: true
             });
         },
 
@@ -141,6 +143,8 @@ define([
             game.completed = true;
             this.model.save({
                 game: game
+            }, {
+                patch: true
             });
         },
 
