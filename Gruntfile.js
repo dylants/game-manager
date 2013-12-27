@@ -43,7 +43,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-requirejs");
     grunt.loadNpmTasks('grunt-contrib-cssmin');
 
-    grunt.registerTask("default", ["jshint", "requirejs", "cssmin"]);
+    grunt.registerTask("default", ["clean", "jshint", "requirejs", "cssmin"]);
 
     grunt.registerTask("clean", function() {
         grunt.file.delete("public/js/game-manager-min.js");
