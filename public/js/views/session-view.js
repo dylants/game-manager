@@ -2,7 +2,7 @@
 define([
     "backbone",
     "underscore",
-    "text!/assets/templates/session.html"
+    "text!../templates/session.html"
 ], function(Backbone, _, sessionHtml) {
     "use strict";
 

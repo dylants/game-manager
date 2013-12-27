@@ -6,7 +6,7 @@ define([
     "schedule-collection",
     "game-view",
     "game-model",
-    "text!/assets/templates/games.html"
+    "text!../templates/games.html"
 ], function(Backbone, _, $, ScheduleCollection, GameView, GameModel, gamesHtml) {
     "use strict";
 

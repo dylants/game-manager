@@ -2,8 +2,8 @@
 define([
     "backbone",
     "underscore",
-    "text!/assets/templates/game.html",
-    "text!/assets/templates/game-notes.html"
+    "text!../templates/game.html",
+    "text!../templates/game-notes.html"
 ], function(Backbone, _, gameHtml, gameNotesHtml) {
     "use strict";
 

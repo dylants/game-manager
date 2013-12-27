@@ -1,6 +1,6 @@
 body {
     background-color: rgb(245, 245, 245);
-    background-image: url("/assets/img/tweed.png");
+    background-image: url("/public/img/tweed.png");
 }
 h1, h2 {
     text-align: center;
