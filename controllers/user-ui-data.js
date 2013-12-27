@@ -32,7 +32,8 @@ module.exports = function(app) {
                             sport: team.sport,
                             name: team.team
                         }).populate("schedule").exec(function(err, team) {
-                            var teamGames, teamGamesCounter, teamGame, userGamesWatched, i;
+                            var teamGames, currentTime, teamGamesCounter, teamGame,
+                                userGamesWatched, i;
 
                             if (err) {
                                 whilstCallback(err);
@@ -41,6 +42,9 @@ module.exports = function(app) {
 
                             // get the games for the team
                             teamGames = team.schedule.toObject();
+
+                            // current time is used to calculate the game state
+                            currentTime = (new Date()).valueOf();
 
                             // loop over these games to optionally add watched information
                             for (teamGamesCounter = 0; teamGamesCounter < teamGames.length; teamGamesCounter++) {
@@ -53,6 +57,18 @@ module.exports = function(app) {
                                         teamGame.notes = userGamesWatched[i].notes;
                                         teamGame.completed = userGamesWatched[i].completed;
                                         break;
+                                    }
+                                }
+
+                                // set the game state based off if viewed or current time
+                                if (teamGame.completed) {
+                                    teamGame.gameState = "archived";
+                                } else {
+                                    // if we haven't, is it available to watch?
+                                    if (currentTime > teamGame.availableGameTimeUTC) {
+                                        teamGame.gameState = "available";
+                                    } else {
+                                        teamGame.gameState = "future";
                                     }
                                 }
 

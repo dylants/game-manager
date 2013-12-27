@@ -41,12 +41,9 @@ define([
         },
 
         render: function() {
-            var availableGamesSelector, currentTime, i, games, game, gameState, gameView;
+            var availableGamesSelector, i, games, game, gameView;
 
             this.$el.html(this.template());
-
-            currentTime = new Date();
-            currentTime = currentTime.valueOf();
 
             availableGamesSelector = $("#available-games");
 
@@ -55,26 +52,12 @@ define([
             for (i = 0; i < games.length; i++) {
                 game = games[i];
 
-                // check to see if the user has seen this game already
-                if (game.completed) {
-                    gameState = "archived";
-                } else {
-                    // if we haven't, is it available to watch?
-                    if (currentTime > game.availableGameTimeUTC) {
-                        gameState = "available";
-                    } else {
-                        gameState = "future";
-                    }
-                }
-                // store the game state
-                game.gameState = gameState;
-
                 // only render available games
-                if (gameState === "available") {
+                if (game.gameState === "available") {
                     // create a game view with the information we've collected so far
                     gameView = new GameView({
                         model: game,
-                        gameState: gameState,
+                        gameState: game.gameState,
                         notes: game.notes || ""
                     });
 
