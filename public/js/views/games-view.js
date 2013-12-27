@@ -17,9 +17,9 @@ define([
         template: _.template(gamesHtml),
 
         events: {
-            "click #available-games-header": "toggleAvailableGames",
-            "click #future-games-header": "toggleFutureGames",
-            "click #archived-games-header": "toggleArchivedGames"
+            "click #more-available-games-button": "renderMoreAvailableGames",
+            "click #more-future-games-button": "renderMoreFutureGames",
+            "click #more-archived-games-button": "renderMoreArchivedGames"
         },
 
         initialize: function(args) {
@@ -27,11 +27,12 @@ define([
             Backbone.on("game-marked-as-watched", this.markedGameAsWatched, this);
             Backbone.on("game-notes", this.setNoteForGame, this);
 
-            // setup for rendering of archived and future games
-            this.renderedArchivedGames = false;
-            this.renderedFutureGames = false;
-            Backbone.on("render-archived-games", this.renderArchivedGames, this);
-            Backbone.on("render-future-games", this.renderFutureGames, this);
+            // setup for rendering more games
+            this.availableGamesOffset = 0;
+            this.archivedGamesOffset = 0;
+            this.futureGamesOffset = 0;
+            // amount of games to load each button press
+            this.amountOfGamesToLoad = 10;
         },
 
         close: function() {
@@ -41,39 +42,40 @@ define([
         },
 
         render: function() {
-            var availableGamesSelector, i, availableGames, game, gameView;
+            var availableGamesSelector, availableGames, futureGamesSelector,
+                futureGames;
 
             this.$el.html(this.template());
 
             availableGamesSelector = $("#available-games");
-
-            // iterate over the user's available games
             availableGames = this.model.get("availableGames");
-            for (i = 0; i < availableGames.length; i++) {
-                game = availableGames[i];
+            futureGamesSelector = $("#future-games");
+            futureGames = this.model.get("futureGames");
 
-                // create a game view with the information we've collected so far
-                gameView = new GameView({
-                    model: game,
-                    gameState: game.gameState,
-                    notes: game.notes || ""
-                });
-
-                // and append it to the available games
-                availableGamesSelector.append(gameView.render().el);
-            }
+            // load (up to) 5 available games
+            this.availableGamesOffset = this.renderMoreGames(availableGamesSelector,
+                availableGames, this.availableGamesOffset, 5);
+            // load (up to) 2 future games
+            this.futureGamesOffset = this.renderMoreGames(futureGamesSelector,
+                futureGames, this.futureGamesOffset, 3);
 
             return this;
         },
 
-        renderArchivedGames: function() {
-            var archivedGamesSelector, i, archivedGames, game, gameView;
+        renderMoreGames: function(gamesSelector, games, gamesOffset, gamesToLoad) {
+            var i, count, game, gameView;
 
-            archivedGamesSelector = $("#archived-games");
+            if (gamesOffset > games.length) {
+                // no more to load, return
+                return;
+            }
 
-            archivedGames = this.model.get("archivedGames");
-            for (i = 0; i < archivedGames.length; i++) {
-                game = archivedGames[i];
+            // keep track of the amount we've loaded
+            count = 0;
+            // load more games until we've loaded all games or gamesToLoad
+            for (i = gamesOffset; i < games.length && count < gamesToLoad; i++) {
+                count++;
+                game = games[i];
 
                 gameView = new GameView({
                     model: game,
@@ -81,28 +83,11 @@ define([
                     notes: game.notes || ""
                 });
 
-                // render the view in the archived section
-                archivedGamesSelector.append(gameView.render().el);
+                gamesSelector.append(gameView.render().el);
             }
-        },
 
-        renderFutureGames: function() {
-            var futureGamesSelector, i, futureGames, game, gameView;
-
-            futureGamesSelector = $("#future-games");
-
-            futureGames = this.model.get("futureGames");
-            for (i = 0; i < futureGames.length; i++) {
-                game = futureGames[i];
-
-                gameView = new GameView({
-                    model: game,
-                    gameState: game.gameState,
-                    notes: game.notes || ""
-                });
-
-                futureGamesSelector.append(gameView.render().el);
-            }
+            // return the amount of games loaded + offset
+            return count + gamesOffset;
         },
 
         setNoteForGame: function(game, note) {
@@ -123,32 +108,43 @@ define([
             });
         },
 
-        toggleAvailableGames: function(ev) {
+        renderMoreAvailableGames: function(ev) {
+            var availableGamesSelector, availableGames;
+
             ev.preventDefault();
 
-            $("#available-games").toggle();
+            availableGamesSelector = $("#available-games");
+            availableGames = this.model.get("availableGames");
+
+            // load (up to) 10 more available games
+            this.availableGamesOffset = this.renderMoreGames(availableGamesSelector,
+                availableGames, this.availableGamesOffset, 10);
         },
 
-        toggleFutureGames: function(ev) {
+        renderMoreFutureGames: function(ev) {
+            var futureGamesSelector, futureGames;
+
             ev.preventDefault();
 
-            if (!this.renderedFutureGames) {
-                this.renderedFutureGames = true;
-                Backbone.trigger("render-future-games");
-            }
+            futureGamesSelector = $("#future-games");
+            futureGames = this.model.get("futureGames");
 
-            $("#future-games").toggle();
+            // load (up to) 10 more future games
+            this.futureGamesOffset = this.renderMoreGames(futureGamesSelector,
+                futureGames, this.futureGamesOffset, 10);
         },
 
-        toggleArchivedGames: function(ev) {
+        renderMoreArchivedGames: function(ev) {
+            var archivedGamesSelector, archivedGames;
+
             ev.preventDefault();
 
-            if (!this.renderedArchivedGames) {
-                this.renderedArchivedGames = true;
-                Backbone.trigger("render-archived-games");
-            }
+            archivedGamesSelector = $("#archived-games");
+            archivedGames = this.model.get("archivedGames");
 
-            $("#archived-games").toggle();
+            // load (up to) 10 more archived games
+            this.archivedGamesOffset = this.renderMoreGames(archivedGamesSelector,
+                archivedGames, this.archivedGamesOffset, 10);
         }
     });
 
