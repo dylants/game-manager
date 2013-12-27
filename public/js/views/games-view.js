@@ -116,9 +116,9 @@ define([
             availableGamesSelector = $("#available-games");
             availableGames = this.model.get("availableGames");
 
-            // load (up to) 10 more available games
+            // load (up to) amountOfGamesToLoad more available games
             this.availableGamesOffset = this.renderMoreGames(availableGamesSelector,
-                availableGames, this.availableGamesOffset, 10);
+                availableGames, this.availableGamesOffset, this.amountOfGamesToLoad);
         },
 
         renderMoreFutureGames: function(ev) {
@@ -129,9 +129,9 @@ define([
             futureGamesSelector = $("#future-games");
             futureGames = this.model.get("futureGames");
 
-            // load (up to) 10 more future games
+            // load (up to) amountOfGamesToLoad more future games
             this.futureGamesOffset = this.renderMoreGames(futureGamesSelector,
-                futureGames, this.futureGamesOffset, 10);
+                futureGames, this.futureGamesOffset, this.amountOfGamesToLoad);
         },
 
         renderMoreArchivedGames: function(ev) {
@@ -142,9 +142,9 @@ define([
             archivedGamesSelector = $("#archived-games");
             archivedGames = this.model.get("archivedGames");
 
-            // load (up to) 10 more archived games
+            // load (up to) amountOfGamesToLoad more archived games
             this.archivedGamesOffset = this.renderMoreGames(archivedGamesSelector,
-                archivedGames, this.archivedGamesOffset, 10);
+                archivedGames, this.archivedGamesOffset, this.amountOfGamesToLoad);
         }
     });
 
