@@ -80,6 +80,8 @@ module.exports = function(app) {
                         });
                     },
                     function(err) {
+                        var availableGames, archivedGames, futureGames, i, game;
+
                         if (err) {
                             console.error(err);
                             res.send(500, {
@@ -100,8 +102,33 @@ module.exports = function(app) {
                             }
                         });
 
+                        // with the games sorted, place them in the correct collection
+                        availableGames = [];
+                        archivedGames = [];
+                        futureGames = [];
+                        for (i = 0; i < games.length; i++) {
+                            game = games[i];
+                            switch (game.gameState) {
+                                case "available":
+                                    availableGames.push(game);
+                                    break;
+                                case "archived":
+                                    archivedGames.push(game);
+                                    break;
+                                case "future":
+                                    futureGames.push(game);
+                                    break;
+                                default:
+                                    console.error("unable to place game: " + game);
+                                    break;
+                            }
+                        }
+
+                        // send the set of games back
                         res.send({
-                            games: games
+                            availableGames: availableGames,
+                            archivedGames: archivedGames,
+                            futureGames: futureGames
                         });
                     }
                 );

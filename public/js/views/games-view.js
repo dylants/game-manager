@@ -41,75 +41,67 @@ define([
         },
 
         render: function() {
-            var availableGamesSelector, i, games, game, gameView;
+            var availableGamesSelector, i, availableGames, game, gameView;
 
             this.$el.html(this.template());
 
             availableGamesSelector = $("#available-games");
 
-            // iterate over the user's games
-            games = this.model.get("games");
-            for (i = 0; i < games.length; i++) {
-                game = games[i];
+            // iterate over the user's available games
+            availableGames = this.model.get("availableGames");
+            for (i = 0; i < availableGames.length; i++) {
+                game = availableGames[i];
 
-                // only render available games
-                if (game.gameState === "available") {
-                    // create a game view with the information we've collected so far
-                    gameView = new GameView({
-                        model: game,
-                        gameState: game.gameState,
-                        notes: game.notes || ""
-                    });
+                // create a game view with the information we've collected so far
+                gameView = new GameView({
+                    model: game,
+                    gameState: game.gameState,
+                    notes: game.notes || ""
+                });
 
-                    // and append it to the available games
-                    availableGamesSelector.append(gameView.render().el);
-                }
+                // and append it to the available games
+                availableGamesSelector.append(gameView.render().el);
             }
 
             return this;
         },
 
         renderArchivedGames: function() {
-            var archivedGamesSelector, i, games, game, gameView;
+            var archivedGamesSelector, i, archivedGames, game, gameView;
 
             archivedGamesSelector = $("#archived-games");
 
-            games = this.model.get("games");
-            for (i = 0; i < games.length; i++) {
-                game = games[i];
+            archivedGames = this.model.get("archivedGames");
+            for (i = 0; i < archivedGames.length; i++) {
+                game = archivedGames[i];
 
-                // if the game state is archived...
-                if (game.gameState === "archived") {
-                    gameView = new GameView({
-                        model: game,
-                        gameState: game.gameState,
-                        notes: game.notes || ""
-                    });
+                gameView = new GameView({
+                    model: game,
+                    gameState: game.gameState,
+                    notes: game.notes || ""
+                });
 
-                    // render the view in the archived section
-                    archivedGamesSelector.append(gameView.render().el);
-                }
+                // render the view in the archived section
+                archivedGamesSelector.append(gameView.render().el);
             }
         },
 
         renderFutureGames: function() {
-            var futureGamesSelector, i, games, game, gameView;
+            var futureGamesSelector, i, futureGames, game, gameView;
 
             futureGamesSelector = $("#future-games");
 
-            games = this.model.get("games");
-            for (i = 0; i < games.length; i++) {
-                game = games[i];
+            futureGames = this.model.get("futureGames");
+            for (i = 0; i < futureGames.length; i++) {
+                game = futureGames[i];
 
-                if (game.gameState === "future") {
-                    gameView = new GameView({
-                        model: game,
-                        gameState: game.gameState,
-                        notes: game.notes || ""
-                    });
+                gameView = new GameView({
+                    model: game,
+                    gameState: game.gameState,
+                    notes: game.notes || ""
+                });
 
-                    futureGamesSelector.append(gameView.render().el);
-                }
+                futureGamesSelector.append(gameView.render().el);
             }
         },
 
