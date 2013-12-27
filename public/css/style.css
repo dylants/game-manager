@@ -7,6 +7,16 @@ h1, h2 {
     font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
     color: rgb(213, 211, 211);
 }
+#available-games-header:hover, #future-games-header:hover, #archived-games-header:hover {
+    cursor: pointer;
+    color: rgb(233, 231, 231);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 .game {
     padding: 1em;
     border: 1px solid rgb(200, 200, 200);

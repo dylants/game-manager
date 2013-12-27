@@ -17,16 +17,21 @@ define([
         template: _.template(gamesHtml),
 
         events: {
+            "click #available-games-header": "toggleAvailableGames",
             "click #future-games-header": "toggleFutureGames",
             "click #archived-games-header": "toggleArchivedGames"
         },
 
         initialize: function(args) {
+            // setup for game interaction
             Backbone.on("game-marked-as-watched", this.markedGameAsWatched, this);
             Backbone.on("game-notes", this.setNoteForGame, this);
-            Backbone.on("render-non-available-games", this.renderNonAvailableGames, this);
 
-            this.renderedNonAvailableGames = false;
+            // setup for rendering of archived and future games
+            this.renderedArchivedGames = false;
+            this.renderedFutureGames = false;
+            Backbone.on("render-archived-games", this.renderArchivedGames, this);
+            Backbone.on("render-future-games", this.renderFutureGames, this);
         },
 
         close: function() {
@@ -81,40 +86,46 @@ define([
             return this;
         },
 
-        renderNonAvailableGames: function() {
-            var archivedGamesSelector, futureGamesSelector,
-                currentTime, i, games, game, gameView;
-
-            currentTime = new Date();
-            currentTime = currentTime.valueOf();
+        renderArchivedGames: function() {
+            var archivedGamesSelector, i, games, game, gameView;
 
             archivedGamesSelector = $("#archived-games");
-            futureGamesSelector = $("#future-games");
 
             games = this.model.get("games");
-            // iterate again, this time for archived and future games
             for (i = 0; i < games.length; i++) {
                 game = games[i];
 
-                if (game.gameState !== "available") {
-                    // create a game view with the information we've collected so far
+                // if the game state is archived...
+                if (game.gameState === "archived") {
                     gameView = new GameView({
                         model: game,
                         gameState: game.gameState,
                         notes: game.notes || ""
                     });
 
-                    // based on the game state, put the game in the correct section
-                    switch (game.gameState) {
-                        case "archived":
-                            archivedGamesSelector.append(gameView.render().el);
-                            break;
-                        case "future":
-                            futureGamesSelector.append(gameView.render().el);
-                            break;
-                        default:
-                            console.error("unknown gameState: " + game.gameState);
-                    }
+                    // render the view in the archived section
+                    archivedGamesSelector.append(gameView.render().el);
+                }
+            }
+        },
+
+        renderFutureGames: function() {
+            var futureGamesSelector, i, games, game, gameView;
+
+            futureGamesSelector = $("#future-games");
+
+            games = this.model.get("games");
+            for (i = 0; i < games.length; i++) {
+                game = games[i];
+
+                if (game.gameState === "future") {
+                    gameView = new GameView({
+                        model: game,
+                        gameState: game.gameState,
+                        notes: game.notes || ""
+                    });
+
+                    futureGamesSelector.append(gameView.render().el);
                 }
             }
         },
@@ -133,12 +144,18 @@ define([
             });
         },
 
+        toggleAvailableGames: function(ev) {
+            ev.preventDefault();
+
+            $("#available-games").toggle();
+        },
+
         toggleFutureGames: function(ev) {
             ev.preventDefault();
 
-            if (!this.renderedNonAvailableGames) {
-                this.renderedNonAvailableGames = true;
-                Backbone.trigger("render-non-available-games");
+            if (!this.renderedFutureGames) {
+                this.renderedFutureGames = true;
+                Backbone.trigger("render-future-games");
             }
 
             $("#future-games").toggle();
@@ -147,9 +164,9 @@ define([
         toggleArchivedGames: function(ev) {
             ev.preventDefault();
 
-            if (!this.renderedNonAvailableGames) {
-                this.renderedNonAvailableGames = true;
-                Backbone.trigger("render-non-available-games");
+            if (!this.renderedArchivedGames) {
+                this.renderedArchivedGames = true;
+                Backbone.trigger("render-archived-games");
             }
 
             $("#archived-games").toggle();
