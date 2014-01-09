@@ -124,6 +124,10 @@ module.exports = function(app) {
                             }
                         }
 
+                        // archived games should be last one first, so
+                        // that the user sees the latest archived.
+                        archivedGames.reverse();
+
                         // send the set of games back
                         res.send({
                             availableGames: availableGames,
