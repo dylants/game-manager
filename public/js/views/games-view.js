@@ -59,13 +59,22 @@ define([
             this.futureGamesOffset = this.renderMoreGames(futureGamesSelector,
                 futureGames, this.futureGamesOffset, 3);
 
+            // determine if we should hide the load more button
+            if (this.availableGamesOffset >= availableGames.length) {
+                $("#more-available-games-button").hide();
+            }
+            // determine if we should hide the load more button
+            if (this.futureGamesOffset >= futureGames.length) {
+                $("#more-future-games-button").hide();
+            }
+
             return this;
         },
 
         renderMoreGames: function(gamesSelector, games, gamesOffset, gamesToLoad) {
             var i, count, game, gameView;
 
-            if (gamesOffset > games.length) {
+            if (gamesOffset >= games.length) {
                 // no more to load, return
                 return;
             }
@@ -109,42 +118,78 @@ define([
         },
 
         renderMoreAvailableGames: function(ev) {
-            var availableGamesSelector, availableGames;
+            var availableGames, availableGamesSelector;
 
             ev.preventDefault();
 
-            availableGamesSelector = $("#available-games");
             availableGames = this.model.get("availableGames");
+
+            // check to see if we need to do anything
+            if (this.availableGamesOffset >= availableGames.length) {
+                // no more games to load, do nothing
+                return;
+            }
+
+            availableGamesSelector = $("#available-games");
 
             // load (up to) amountOfGamesToLoad more available games
             this.availableGamesOffset = this.renderMoreGames(availableGamesSelector,
                 availableGames, this.availableGamesOffset, this.amountOfGamesToLoad);
+
+            // determine if we should hide the load more button
+            if (this.availableGamesOffset >= availableGames.length) {
+                $("#more-available-games-button").hide();
+            }
         },
 
         renderMoreFutureGames: function(ev) {
-            var futureGamesSelector, futureGames;
+            var futureGames, futureGamesSelector;
 
             ev.preventDefault();
 
-            futureGamesSelector = $("#future-games");
             futureGames = this.model.get("futureGames");
+
+            // check to see if we need to do anything
+            if (this.futureGamesOffset >= futureGames.length) {
+                // no more games to load, do nothing
+                return;
+            }
+
+            futureGamesSelector = $("#future-games");
 
             // load (up to) amountOfGamesToLoad more future games
             this.futureGamesOffset = this.renderMoreGames(futureGamesSelector,
                 futureGames, this.futureGamesOffset, this.amountOfGamesToLoad);
+
+            // determine if we should hide the load more button
+            if (this.futureGamesOffset >= futureGames.length) {
+                $("#more-future-games-button").hide();
+            }
         },
 
         renderMoreArchivedGames: function(ev) {
-            var archivedGamesSelector, archivedGames;
+            var archivedGames, archivedGamesSelector;
 
             ev.preventDefault();
 
-            archivedGamesSelector = $("#archived-games");
             archivedGames = this.model.get("archivedGames");
+
+            // check to see if we need to do anything
+            if (this.archivedGamesOffset >= archivedGames.length) {
+                // no more games to load, do nothing
+                return;
+            }
+
+            archivedGamesSelector = $("#archived-games");
 
             // load (up to) amountOfGamesToLoad more archived games
             this.archivedGamesOffset = this.renderMoreGames(archivedGamesSelector,
                 archivedGames, this.archivedGamesOffset, this.amountOfGamesToLoad);
+
+            // determine if we should hide the load more button
+            if (this.archivedGamesOffset >= archivedGames.length) {
+                $("#more-archived-games-button").hide();
+            }
         }
     });
 
