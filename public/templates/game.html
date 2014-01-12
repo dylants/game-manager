@@ -14,7 +14,7 @@
         <%- availableTimeMoment.format("MM/DD/YYYY") %>
         <% } %>
     </div>
-    <div class="game-element col-xs-4 col-md-2">
+    <div class="game-element game-element-time col-xs-4 col-md-2">
         <% if (isBlackedOut) { %>
         <div class="original-time">
         <% } %>
@@ -34,9 +34,9 @@
     </div>
     <% } %>
     <% if (gameState === "archived") { %>
-    <div class="game-element col-xs-7 col-md-4">
+    <div class="game-element game-element-logos col-xs-7 col-md-4">
     <% } else { %>
-    <div class="game-element col-xs-8 col-md-4">
+    <div class="game-element game-element-logos col-xs-8 col-md-4">
     <% } %>
         <img class="team-logo" src="<%- awayTeamLogoHref %>"/>
         at
