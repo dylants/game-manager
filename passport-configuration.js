@@ -20,7 +20,7 @@ passport.use(new LocalStrategy(function(username, password, done) {
     // find the user based off the username (case insensitive)
     User.findOne({
         username: new RegExp(username, "i")
-    }, function(err, user) {
+    }).select("+password").exec(function(err, user) {
         // if any problems, error out
         if (err) {
             return done(err);
@@ -31,7 +31,21 @@ passport.use(new LocalStrategy(function(username, password, done) {
             });
         }
 
-        // no password verification, so if we've gotten here, we're good!
-        return done(null, user);
+        // verify if the password is valid
+        user.isPasswordValid(password, function(err, isValid) {
+            // if any problems, error out
+            if (err) {
+                return done(err);
+            }
+
+            // only return the user if the password is valid
+            if (isValid) {
+                return done(null, user);
+            } else {
+                return done(null, false, {
+                    message: "Invalid password"
+                });
+            }
+        });
     });
 }));

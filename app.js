@@ -8,8 +8,8 @@ var express = require("express"),
     mongoose = require("mongoose"),
     config = require("./config.yaml");
 
-// 30 days for session cookie lifetime
-var SESSION_COOKIE_LIFETIME = 1000 * 60 * 60 * 24 * 30;
+// 365 days for session cookie lifetime
+var SESSION_COOKIE_LIFETIME = 1000 * 60 * 60 * 24 * 365;
 
 // Verifies the user is authenticated, else returns unauthorized
 var requireAuthentication = function(req, res, next) {
@@ -37,6 +37,7 @@ app.configure(function() {
 
     // use express' cookie session
     app.use(express.cookieSession({
+        key: "gmecs",
         secret: "gmecs",
         cookie: {
             maxAge: SESSION_COOKIE_LIFETIME

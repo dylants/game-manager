@@ -25,10 +25,13 @@ h1, h2 {
 .load-more-games {
     text-align: center;
 }
-.load-more-games-button {
+.load-more-games-button, .login-button {
     background-color: rgb(213, 211, 211);
     margin-top: 1em;
     margin-bottom: 1em;
+}
+.login-input {
+    margin-top: 1em;
 }
 .login-button-row {
     text-align: center;

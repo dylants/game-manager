@@ -1,6 +1,4 @@
-var passport = require("passport"),
-    mongoose = require("mongoose"),
-    User = mongoose.model("User");
+var passport = require("passport");
 
 module.exports = function(app) {
     // returns the user if authenticated, else 401 (unauthorized)

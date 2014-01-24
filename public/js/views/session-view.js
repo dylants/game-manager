@@ -31,19 +31,18 @@ define([
         },
 
         login: function(ev) {
-            var username, that;
+            var username, password, that;
 
             ev.preventDefault();
 
             username = this.$("input[name='username']").val();
+            password = this.$("input[name='password']").val();
 
             that = this;
             $.when(
-                // Even though we don't use passwords, this MUST include a password
-                // for passport compatibility. So send in a fake password.
                 this.model.save({
                     username: username,
-                    password: "password"
+                    password: password
                 })
             ).done(function() {
                 that.showGames();

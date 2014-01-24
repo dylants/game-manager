@@ -21,7 +21,8 @@
         "async": "~0.2.9",
         "js-yaml": "~3.0.0",
         "passport": "~0.1.17",
-        "passport-local": "~0.1.6"
+        "passport-local": "~0.1.6",
+        "bcrypt": "~0.7.7"
     },
     "devDependencies": {
         "grunt": "~0.4.1",
