@@ -1,10 +1,10 @@
 <div class="game row">
     <% var gameTimeMoment = moment(gameTimeUTC) %>
     <% var availableTimeMoment = moment(availableGameTimeUTC) %>
-    <div class="game-element sport-logo-div col-xs-1 col-md-1">
+    <div class="game-element sport-logo-div col-xs-1 col-sm-1 col-md-1">
         <img class="sport-logo" src="<%- sportLogoHref %>"/>
     </div>
-    <div class="game-element col-xs-4 col-md-2">
+    <div class="game-element col-xs-4 col-sm-2 col-md-2">
         <% if (isBlackedOut) { %>
         <div class="original-time">
         <% } %>
@@ -14,7 +14,7 @@
         <%- availableTimeMoment.format("MM/DD/YYYY") %>
         <% } %>
     </div>
-    <div class="game-element game-element-time col-xs-4 col-md-2">
+    <div class="game-element game-element-time col-xs-4 col-sm-2 col-md-2">
         <% if (isBlackedOut) { %>
         <div class="original-time">
         <% } %>
@@ -25,7 +25,7 @@
         <% } %>
     </div>
     <% if (gameState !== "archived") { %>
-    <div class="game-element col-xs-2 visible-xs">
+    <div class="game-element col-xs-2 visible-mobile">
         <% if (notes) { %>
         <button class="btn btn-xs btn-info notes-button">Notes</button>
         <% } else { %>
@@ -34,27 +34,27 @@
     </div>
     <% } %>
     <% if (gameState === "archived") { %>
-    <div class="game-element game-element-logos col-xs-7 col-md-4">
+    <div class="game-element game-element-logos col-xs-7 col-sm-4 col-md-4">
     <% } else { %>
-    <div class="game-element game-element-logos col-xs-8 col-md-4">
+    <div class="game-element game-element-logos col-xs-8 col-sm-4 col-md-4">
     <% } %>
         <img class="team-logo" src="<%- awayTeamLogoHref %>"/>
         at
         <img class="team-logo" src="<%- homeTeamLogoHref %>"/>
     </div>
     <% if (gameState === "archived") { %>
-    <div class="game-element col-xs-2 col-md-3">
+    <div class="game-element col-xs-2 col-sm-3 col-md-3">
         <button class="btn btn-xs btn-primary undo-archived-button">Undo Archive</button>
     </div>
     <% } else { %>
-    <div class="game-element hidden-xs col-md-1">
+    <div class="game-element hidden-mobile col-sm-1 col-md-1">
         <% if (notes) { %>
         <button class="btn btn-xs btn-info notes-button">Notes</button>
         <% } else { %>
         <button class="btn btn-xs btn-default notes-button">Notes</button>
         <% } %>
     </div>
-    <div class="game-element col-xs-2 col-md-2">
+    <div class="game-element col-xs-2 col-sm-2 col-md-2">
         <button class="btn btn-xs btn-primary watched-button">Watched</button>
     </div>
     <% } %>
