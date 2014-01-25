@@ -39,6 +39,9 @@ h1, h2 {
 }
 /* large */
  @media (min-width: 768px) {
+    .game {
+        min-height: 72px;
+    }
     .watched-button {
         margin-left: 1em;
     }
@@ -51,6 +54,9 @@ h1, h2 {
 }
 /* small */
  @media (max-width: 768px) {
+    .game {
+        min-height: 112px;
+    }
     .game-element {
         padding-left: 0em;
     }
@@ -60,6 +66,16 @@ h1, h2 {
     .notes-button, .watched-button, .undo-archived-button {
         margin-top: 0.75em;
         padding: 0.3em 1em;
+    }
+    .notes-button {
+        width: 6em;
+    }
+    .update-notes-button, .cancel-notes-button {
+        padding: 0.3em 1em;
+        width: 9em;
+    }
+    .update-notes-button {
+        margin-left: 1.75em;
     }
     .sport-logo {
         width: 2em;
