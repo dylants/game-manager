@@ -1,5 +1,5 @@
 /* Override the min-width on bootstrap's small elements */
-@media (min-width: 321px) {
+@media (min-width: 560px) {
     .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {
         float: left;
     }
@@ -221,7 +221,7 @@ h1, h2 {
     }
 }
 /* non-mobile */
- @media (min-width: 321px) {
+ @media (min-width: 560px) {
     .game {
         min-height: 72px;
     }
@@ -252,7 +252,7 @@ h1, h2 {
     }
 }
 /* mobile */
- @media (max-width: 320px) {
+ @media (max-width: 559px) {
     .hidden-mobile {
         display: none !important;
     }
