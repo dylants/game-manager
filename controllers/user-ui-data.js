@@ -56,13 +56,20 @@ module.exports = function(app) {
 
         // PATCH to update our User with the View Model data
         app.patch("/user-ui-data/:id", function(req, res) {
-            var watchedGame;
+            if (req.body.game) {
+                updateWatchedGameForUser(req.params.id, req.body.game, function(err) {
+                    if (err) {
+                        console.error(err);
+                        res.send(500, {
+                            "error": err
+                        });
+                        return;
+                    }
 
-            // pull the watched game from the request body
-            watchedGame = req.body.game;
-
-            if (watchedGame) {
-                updateWatchedGameForUser(req.params.id, watchedGame, function(err) {
+                    res.send(200);
+                });
+            } else if (req.body.teams) {
+                updateTeamsForUser(req.params.id, req.body.teams, function(err) {
                     if (err) {
                         console.error(err);
                         res.send(500, {
@@ -216,6 +223,10 @@ function updateWatchedGameForUser(userId, watchedGame, callback) {
             callback(err);
             return;
         }
+        if (user === null) {
+            callback("User " + userId + " does not exist");
+            return;
+        }
 
         // find the watched games for this watched game sport
         for (i = 0; i < user.sportsWatched.length; i++) {
@@ -251,6 +262,28 @@ function updateWatchedGameForUser(userId, watchedGame, callback) {
                 completed: watchedGame.completed
             });
         }
+
+        // save the updated game
+        user.save(function(err, user) {
+            callback(err);
+        });
+    });
+}
+
+function updateTeamsForUser(userId, teams, callback) {
+    // update the teams for the user
+    User.findById(userId, function(err, user) {
+        if (err) {
+            callback(err);
+            return;
+        }
+        if (user === null) {
+            callback("User " + userId + " does not exist");
+            return;
+        }
+
+        // update the teams to the input
+        user.teams = teams;
 
         // save the updated game
         user.save(function(err, user) {
