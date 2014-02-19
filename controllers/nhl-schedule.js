@@ -1,7 +1,7 @@
 var csv = require("csv"),
     request = require("request"),
     async = require("async"),
-    NHLGameBuilder = require("../model-builders/nhl-game-builder"),
+    NHLGameBuilder = require("../lib/nhl-game-builder"),
     mongoose = require("mongoose"),
     Team = mongoose.model("Team");
 
