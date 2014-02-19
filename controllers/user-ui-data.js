@@ -149,6 +149,9 @@ function addGamesForTeam(team, user, callback) {
 function getGamesWatched(user, sport) {
     var gamesWatched, sportsWatched, i;
 
+    // default to empty in case none exist
+    gamesWatched = [];
+
     // get the sports watched for this user
     sportsWatched = user.sportsWatched.toObject();
     if (sportsWatched && sportsWatched.length > 0) {
