@@ -1,59 +1,9 @@
 var moment = require("moment"),
     async = require("async"),
+    GameBuilder = require("../lib/game-builder"),
     mongoose = require("mongoose"),
     Game = mongoose.model("Game"),
     Team = mongoose.model("Team");
-
-/**
- * Finds the logo href for the team sent in, searching for the Team
- * 
- * @param  {String}   teamName The name of the team to search for
- * @param  {Function} callback Called when logo found, or error occurs
- */
-var locateLogoHref = function(teamName, callback) {
-    // this team name could be the city, or a city/mascot mix
-    // so first look for the city match, then mascot loose match
-    Team.findOne({
-        sport: "NBA",
-        city: teamName
-    }, function(err, team) {
-        var looseMascot;
-
-        if (err) {
-            callback(err);
-            return;
-        } else if (team) {
-            callback(null, team.logoHref);
-            return;
-        } else {
-            // look for a loose match on the mascot
-            if (teamName.indexOf(".") > -1) {
-                looseMascot = teamName.slice(teamName.lastIndexOf(".") + 1);
-            } else if (teamName.indexOf(" ") > -1) {
-                looseMascot = teamName.slice(teamName.lastIndexOf(" ") + 1);
-            } else {
-                looseMascot = teamName;
-            }
-            Team.findOne({
-                sport: "NBA",
-                mascot: new RegExp(looseMascot, "i")
-            }, function(err, team) {
-                if (err) {
-                    callback(err);
-                    return;
-                } else if (team) {
-                    callback(null, team.logoHref);
-                    return;
-                } else {
-                    // failed to find logo...
-                    console.error("failed to find logo for teamName: " + teamName);
-                    callback(null, "");
-                    return;
-                }
-            });
-        }
-    });
-};
 
 /**
  * Pulls the networks out of the game description
@@ -61,41 +11,19 @@ var locateLogoHref = function(teamName, callback) {
  * @param  {String} gameDescription Description of the game
  * @return {String}                 The networks that show the game
  */
-var parseNetworks = function(gameDescription) {
+
+function parseNetworks(gameDescription) {
     // networks are stored in description after the "on" word
     return gameDescription.split(" on ")[1];
-};
+}
 
-/**
- * Returns true if the game is blacked out
- *
- * @param  {String}  networks The networks that aired the game (or will air)
- * @return {Boolean}          true iff the game is blacked out
- */
-var isGameBlackedOut = function(networks) {
-    if ((networks.indexOf("ABC") !== -1) ||
-        (networks.indexOf("ESPN") !== -1) ||
-        (networks.indexOf("TNT") !== -1) ||
-        (networks.indexOf("NBA TV") !== -1)) {
-        return true;
-    } else {
-        return false;
-    }
-};
-
-/**
- * Returns the UTC time when this game will be available to watch (because of
- * black out)
- *
- * @param  {Number} gameTimeUTC The game time UTC
- * @return {Number}             The time in UTC when the game will be available
- */
-var blackOutAvailableGameTimeUTC = function(gameTimeUTC) {
-    // 3 hours after the end of the game... how bout 7 hours later?
-    return moment(gameTimeUTC).add("hours", 7).valueOf();
-};
-
-function NBAGameBuilder() {}
+function NBAGameBuilder() {
+    // call the super's constructor, passing in the sport
+    GameBuilder.call(this, "NBA");
+}
+// setup inheritance so that NBAGameBuilder extends GameBuilder
+NBAGameBuilder.prototype = Object.create(GameBuilder.prototype);
+NBAGameBuilder.prototype.constructor = NBAGameBuilder;
 
 /**
  * Creates an NBA Game, which has a date and time, teams, and a based on the networks,
@@ -112,8 +40,7 @@ function NBAGameBuilder() {}
  *                          callback(err, game)
  */
 NBAGameBuilder.prototype.buildNBAGame = function(app, date, time, teams, location, description, callback) {
-    var gameTimeUTC, teamsSplit, homeTeamName, awayTeamName, networks, isBlackedOut,
-        availableGameTimeUTC;
+    var gameTimeUTC, teamsSplit, homeTeamName, awayTeamName, networks;
 
     // calculate the UTC game time
     gameTimeUTC = moment(date + " " + time).valueOf();
@@ -133,36 +60,12 @@ NBAGameBuilder.prototype.buildNBAGame = function(app, date, time, teams, locatio
     // determine the networks that aired the game
     networks = parseNetworks(description);
 
-    // populate the blacked out attributes
-    isBlackedOut = isGameBlackedOut(networks);
-    if (isBlackedOut) {
-        availableGameTimeUTC = blackOutAvailableGameTimeUTC(gameTimeUTC);
-    } else {
-        availableGameTimeUTC = gameTimeUTC;
-    }
-
-    async.parallel([
-        // get the logos for each team
-        function(parallelCallback) {
-            locateLogoHref(awayTeamName, parallelCallback);
-        },
-        function(parallelCallback) {
-            locateLogoHref(homeTeamName, parallelCallback);
-        }
-    ], function(err, results) {
-        var awayTeamLogoHref, homeTeamLogoHref;
-
-        awayTeamLogoHref = results[0];
-        homeTeamLogoHref = results[1];
-
-        // try to find the game if it already exists
-        Game.findOne({
-            sport: "NBA",
-            gameTimeUTC: gameTimeUTC,
-            awayTeamName: awayTeamName,
-            homeTeamName: homeTeamName,
-            location: location
-        }, function(err, game) {
+    this.buildGame(gameTimeUTC, awayTeamName, homeTeamName, location, networks,
+        // blackout networks for NBA games
+        ["ABC", "ESPN", "TNT", "NBA TV"],
+        // blacked out games are available 3 hours after the end of the game... how bout 7 hours later?
+        7,
+        function(err, game, gameAttributes) {
             if (err) {
                 // if an error exists, exit here
                 callback(err);
@@ -179,13 +82,13 @@ NBAGameBuilder.prototype.buildNBAGame = function(app, date, time, teams, locatio
                         sportLogoHref: app.get("config").nba.logoHref,
                         gameTimeUTC: gameTimeUTC,
                         awayTeamName: awayTeamName,
-                        awayTeamLogoHref: awayTeamLogoHref,
+                        awayTeamLogoHref: gameAttributes.awayTeamLogoHref,
                         homeTeamName: homeTeamName,
-                        homeTeamLogoHref: homeTeamLogoHref,
+                        homeTeamLogoHref: gameAttributes.homeTeamLogoHref,
                         location: location,
                         networks: networks,
-                        isBlackedOut: isBlackedOut,
-                        availableGameTimeUTC: availableGameTimeUTC
+                        isBlackedOut: gameAttributes.isBlackedOut,
+                        availableGameTimeUTC: gameAttributes.availableGameTimeUTC
                     });
                     // save the newly created game
                     game.save(function(err, game) {
@@ -197,8 +100,8 @@ NBAGameBuilder.prototype.buildNBAGame = function(app, date, time, teams, locatio
                     });
                 }
             }
-        });
-    });
+        }
+    );
 
 };
 

@@ -1,82 +1,9 @@
 var moment = require("moment"),
     async = require("async"),
+    GameBuilder = require("../lib/game-builder"),
     mongoose = require("mongoose"),
     Game = mongoose.model("Game"),
     Team = mongoose.model("Team");
-
-/**
- * Finds the logo href for the team sent in, searching for the Team
- * 
- * @param  {String}   teamName The name of the team to search for
- * @param  {Function} callback Called when logo found, or error occurs
- */
-var locateLogoHref = function(teamName, callback) {
-    // this team name could be the city, or a city/mascot mix
-    // so first look for the city match, then mascot loose match
-    Team.findOne({
-        sport: "NHL",
-        city: teamName
-    }, function(err, team) {
-        var looseMascot;
-
-        if (err) {
-            callback(err);
-            return;
-        } else if (team) {
-            callback(null, team.logoHref);
-            return;
-        } else {
-            // look for a loose match on the mascot
-            if (teamName.indexOf(".") > -1) {
-                looseMascot = teamName.slice(teamName.lastIndexOf(".") + 1);
-            } else if (teamName.indexOf(" ") > -1) {
-                looseMascot = teamName.slice(teamName.lastIndexOf(" ") + 1);
-            } else {
-                looseMascot = teamName;
-            }
-            Team.findOne({
-                sport: "NHL",
-                mascot: new RegExp(looseMascot, "i")
-            }, function(err, team) {
-                var looseCity;
-
-                if (err) {
-                    callback(err);
-                    return;
-                } else if (team) {
-                    callback(null, team.logoHref);
-                    return;
-                } else {
-                    // look for a loose match on the city
-                    if (teamName.indexOf(".") > -1) {
-                        looseCity = teamName.slice(teamName.lastIndexOf(".") + 1);
-                    } else if (teamName.indexOf(" ") > -1) {
-                        looseCity = teamName.slice(teamName.lastIndexOf(" ") + 1);
-                    } else {
-                        looseCity = teamName;
-                    }
-                    Team.findOne({
-                        sport: "NHL",
-                        city: new RegExp(looseCity, "i")
-                    }, function(err, team) {
-                        if (err) {
-                            callback(err);
-                            return;
-                        } else if (team) {
-                            callback(null, team.logoHref);
-                            return;
-                        } else {
-                            // failed to find logo...
-                            console.error("failed to find logo for teamName: " + teamName);
-                            callback(null, "");
-                            return;
-                        }
-                    });
-                }
-            });
-        }
-    });
-};
 
 /**
  * Removes the scores from the teams string (if it exists)
@@ -84,13 +11,14 @@ var locateLogoHref = function(teamName, callback) {
  * @param  {String} teams The teams with optional score
  * @return {String}       The teams without a game score
  */
-var removeScoresFromTeams = function(teams) {
+
+function removeScoresFromTeams(teams) {
     var removeDigitsRegex;
 
     removeDigitsRegex = /[^\d\s]+/g;
 
     return teams.match(removeDigitsRegex).join(" ").replace(/-/g, "at");
-};
+}
 
 /**
  * Returns true if the game is over
@@ -98,41 +26,23 @@ var removeScoresFromTeams = function(teams) {
  * @param  {String}  teams The teams with an optional score
  * @return {Boolean}       true iff the game is over (has a score)
  */
-var determineIfGameIsOver = function(teams) {
+
+function determineIfGameIsOver(teams) {
     if (teams.indexOf("-") > 0) {
         return true;
     } else {
         return false;
     }
-};
+}
 
-/**
- * Returns true if the game is blacked out
- *
- * @param  {String}  networks The networks that aired the game (or will air)
- * @return {Boolean}          true iff the game is blacked out
- */
-var isGameBlackedOut = function(networks) {
-    if ((networks.indexOf("NBC") !== -1) ||
-        (networks.indexOf("NHLN-US") !== -1)) {
-        return true;
-    } else {
-        return false;
-    }
-};
+function NHLGameBuilder() {
+    // call the super's constructor, passing in the sport
+    GameBuilder.call(this, "NHL");
+}
+// setup inheritance so that NHLGameBuilder extends GameBuilder
+NHLGameBuilder.prototype = Object.create(GameBuilder.prototype);
+NHLGameBuilder.prototype.constructor = NHLGameBuilder;
 
-/**
- * Returns the UTC time when this game will be available to watch (because of
- * black out)
- *
- * @param  {Number} gameTimeUTC The game time UTC
- * @return {Number}             The time in UTC when the game will be available
- */
-var blackOutAvailableGameTimeUTC = function(gameTimeUTC) {
-    return moment(gameTimeUTC).add("hours", 52).valueOf();
-};
-
-function NHLGameBuilder() {}
 
 /**
  * Creates an NHLGame, which has a date and time, teams, and a based on the networks,
@@ -150,8 +60,8 @@ function NHLGameBuilder() {}
  *                          callback(err, game)
  */
 NHLGameBuilder.prototype.buildNHLGame = function(app, date, time, teams, location, networks, callback) {
-    var gameTimeUTC, teamsWithoutScores, isGameOver, whoWon, isBlackedOut,
-        availableGameTimeUTC, teamsWithScores, team1, team1Score, team2, team2Score, game;
+    var gameTimeUTC, teamsWithoutScores, isGameOver, teamsWithScores, team1, team1Score,
+        team2, team2Score, whoWon;
 
     // calculate the UTC game time
     gameTimeUTC = moment(date + " " + time).valueOf();
@@ -170,9 +80,9 @@ NHLGameBuilder.prototype.buildNHLGame = function(app, date, time, teams, locatio
         team2Score = teamsWithScores[1].slice(teamsWithScores[1].lastIndexOf(" ")).trim();
 
         if (team1Score > team2Score) {
-            whoWon =  team1;
+            whoWon = team1;
         } else if (team2Score > team1Score) {
-            whoWon =  team2;
+            whoWon = team2;
         } else {
             whoWon = "tie";
         }
@@ -183,36 +93,12 @@ NHLGameBuilder.prototype.buildNHLGame = function(app, date, time, teams, locatio
         team2 = teamsWithoutScores[1];
     }
 
-    // populate the blacked out attributes
-    isBlackedOut = isGameBlackedOut(networks);
-    if (isBlackedOut) {
-        availableGameTimeUTC = blackOutAvailableGameTimeUTC(gameTimeUTC);
-    } else {
-        availableGameTimeUTC = gameTimeUTC;
-    }
-
-    async.parallel([
-        // get the logos for each team
-        function(parallelCallback) {
-            locateLogoHref(team1, parallelCallback);
-        },
-        function(parallelCallback) {
-            locateLogoHref(team2, parallelCallback);
-        }
-    ], function(err, results) {
-        var awayTeamLogoHref, homeTeamLogoHref;
-
-        awayTeamLogoHref = results[0];
-        homeTeamLogoHref = results[1];
-
-        // try to find the game if it already exists
-        Game.findOne({
-            sport: "NHL",
-            gameTimeUTC: gameTimeUTC,
-            awayTeamName: team1,
-            homeTeamName: team2,
-            location: location
-        }, function(err, game) {
+    this.buildGame(gameTimeUTC, team1, team2, location, networks,
+        // blackout networks for NHL games
+        ["NBC", "NHLN-US"],
+        // blacked out games are available 48 hours after game end, so 52 hours later
+        52,
+        function(err, game, gameAttributes) {
             if (err) {
                 // if an error exists, exit here
                 callback(err);
@@ -245,17 +131,17 @@ NHLGameBuilder.prototype.buildNHLGame = function(app, date, time, teams, locatio
                         sportLogoHref: app.get("config").nhl.logoHref,
                         gameTimeUTC: gameTimeUTC,
                         awayTeamName: team1,
-                        awayTeamLogoHref: awayTeamLogoHref,
+                        awayTeamLogoHref: gameAttributes.awayTeamLogoHref,
                         homeTeamName: team2,
-                        homeTeamLogoHref: homeTeamLogoHref,
+                        homeTeamLogoHref: gameAttributes.homeTeamLogoHref,
                         location: location,
                         awayTeamScore: team1Score,
                         homeTeamScore: team2Score,
                         isGameOver: isGameOver,
                         winningTeamName: whoWon,
                         networks: networks,
-                        isBlackedOut: isBlackedOut,
-                        availableGameTimeUTC: availableGameTimeUTC
+                        isBlackedOut: gameAttributes.isBlackedOut,
+                        availableGameTimeUTC: gameAttributes.availableGameTimeUTC
                     });
                     // save the newly created game
                     game.save(function(err, game) {
@@ -267,9 +153,8 @@ NHLGameBuilder.prototype.buildNHLGame = function(app, date, time, teams, locatio
                     });
                 }
             }
-        });
-    });
-
+        }
+    );
 };
 
 module.exports = NHLGameBuilder;
