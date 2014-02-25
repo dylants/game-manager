@@ -24,7 +24,7 @@ define([
         },
 
         before: function(route, params) {
-            var that;
+            var router;
 
             if (!sessionModel) {
                 sessionModel = new SessionModel();
@@ -35,19 +35,26 @@ define([
                 return true;
             }
 
-            that = this;
+            router = this;
+            // Here we're going to perform a GET request for the session,
+            // and if it's found, we'll navigate to the specified route.
+            // If it's not found, we navigate to the login page to allow
+            // the user to authenticate themselves. In this way, we've
+            // (at least through this code path) verified the user is
+            // logged in prior to viewing each page.
             $.when(
                 sessionModel.fetch()
             ).done(
                 function() {
-                    // TODO Really need to fix this...
-                    that.games();
-                    // Backbone.history.navigate(route, {
-                    //     trigger: true
-                    // });
+                    // Call the original function
+                    // Do this by looking up the function to be called from the
+                    // routes object (defined above), and calling that function
+                    // from our router (which is the original "this" instance)
+                    router[router.routes[route]].apply(router, params);
                 }
             ).fail(
                 function() {
+                    // in a fail case, navigate back to login
                     Backbone.history.navigate("login", {
                         trigger: true
                     });
