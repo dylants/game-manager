@@ -33,6 +33,8 @@ define([
             this.futureGamesOffset = 0;
             // amount of games to load each button press
             this.amountOfGamesToLoad = 10;
+
+            this.model.on("sync", this.renderGames, this);
         },
 
         close: function() {
@@ -42,6 +44,13 @@ define([
         },
 
         render: function() {
+            // render nothing, just fetch the model
+            this.model.fetch();
+
+            return this;
+        },
+
+        renderGames: function() {
             var availableGamesSelector, availableGames, futureGamesSelector,
                 futureGames;
 
@@ -122,6 +131,9 @@ define([
 
             ev.preventDefault();
 
+            // deselect the button
+            ev.currentTarget.blur();
+
             availableGames = this.model.get("availableGames");
 
             // check to see if we need to do anything
@@ -147,6 +159,9 @@ define([
 
             ev.preventDefault();
 
+            // deselect the button
+            ev.currentTarget.blur();
+
             futureGames = this.model.get("futureGames");
 
             // check to see if we need to do anything
@@ -171,6 +186,9 @@ define([
             var archivedGames, archivedGamesSelector;
 
             ev.preventDefault();
+
+            // deselect the button
+            ev.currentTarget.blur();
 
             archivedGames = this.model.get("archivedGames");
 

@@ -5,11 +5,10 @@ define([
     "session-model",
     "session-view",
     "user-ui-data-model",
-    "games-view"
-], function(Backbone, $, SessionModel, SessionView, UserUiDataModel, GamesView) {
+    "games-view",
+    "header-view"
+], function(Backbone, $, SessionModel, SessionView, UserUiDataModel, GamesView, HeaderView) {
     "use strict";
-
-    var sessionModel, sessionView, userModel, gamesView;
 
     var Router = Backbone.Router.extend({
         routes: {
@@ -21,13 +20,18 @@ define([
 
         initialize: function() {
             this.on("route", this.routeCalled, this);
+
+            this.currentView = null;
+            this.sessionModel = null;
+
+            this.renderHeader();
         },
 
         before: function(route, params) {
             var router;
 
-            if (!sessionModel) {
-                sessionModel = new SessionModel();
+            if (!this.sessionModel) {
+                this.sessionModel = new SessionModel();
             }
 
             if (route === "login") {
@@ -43,7 +47,7 @@ define([
             // (at least through this code path) verified the user is
             // logged in prior to viewing each page.
             $.when(
-                sessionModel.fetch()
+                this.sessionModel.fetch()
             ).done(
                 function() {
                     // Call the original function
@@ -69,33 +73,35 @@ define([
         },
 
         login: function() {
-            if (sessionView) {
-                sessionView.close();
+            if (this.currentView) {
+                this.currentView.close();
             }
 
-            sessionView = new SessionView({
-                model: sessionModel
+            this.currentView = new SessionView({
+                model: this.sessionModel
             });
-            sessionView.render();
+            this.currentView.render();
         },
 
         games: function(queryParams) {
-            if (gamesView) {
-                gamesView.close();
+            var userModel;
+
+            if (this.currentView) {
+                this.currentView.close();
             }
 
-            userModel = new UserUiDataModel([], sessionModel.get("_id"));
-            gamesView = new GamesView({
+            userModel = new UserUiDataModel([], this.sessionModel.get("_id"));
+            this.currentView = new GamesView({
                 model: userModel
             });
-            // First, load the model. Then when done, call render
-            $.when(
-                userModel.fetch()
-            ).done(
-                function() {
-                    gamesView.render();
-                }
-            );
+            this.currentView.render();
+        },
+
+        renderHeader: function() {
+            var headerView;
+
+            headerView = new HeaderView();
+            headerView.render();
         },
 
         badRoute: function(invalidRoute) {

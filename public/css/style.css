@@ -4,23 +4,36 @@ body {
 h1, h2 {
     text-align: center;
     font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
-    color: rgb(213, 211, 211);
+    color: rgb(183, 196, 214);
 }
 .btn-primary {
     background-color: rgb(9, 53, 106);
     border-color: rgb(9, 53, 106);
 }
 .btn-primary:hover {
-    background-color: rgb(10, 90, 185);
-    border-color: rgb(10, 90, 185);
+    background-color: rgb(9, 68, 139);
+    border-color: rgb(9, 68, 139);
 }
 .btn-info {
     background-color: rgb(57, 113, 180);
     border-color: rgb(57, 113, 180);
 }
 .btn-info:hover {
-    background-color: rgb(70, 140, 220);
-    border-color: rgb(70, 140, 220);
+    background-color: rgb(65, 128, 205);
+    border-color: rgb(65, 128, 205);
+}
+.navbar-game-manager {
+    background-color: rgb(0, 20, 45);
+    border-bottom-color: rgb(57, 113, 180);
+}
+.navbar-game-manager a {
+    color: rgb(57, 113, 180);
+}
+.nav > li > a:hover, .nav > li > a:focus {
+    background-color: rgb(3, 33, 69);
+}
+.icon-bar {
+    background-color: rgb(57, 113, 180);
 }
 .game {
     padding: 1em;
@@ -41,9 +54,19 @@ h1, h2 {
     text-align: center;
 }
 .load-more-games-button, .login-button {
-    background-color: rgb(213, 211, 211);
+    background-color: rgb(0, 20, 45);
+    border-color: rgb(57, 113, 180);
+    color: rgb(57, 113, 180);
     margin-top: 1em;
     margin-bottom: 1em;
+}
+.load-more-games-button:hover,
+.load-more-games-button:focus,
+.login-button:hover,
+.login-button:focus {
+    background-color: rgb(10, 60, 120);
+    border-color: rgb(57, 113, 180);
+    color: rgb(57, 113, 180);
 }
 .login-input {
     margin-top: 1em;

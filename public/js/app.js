@@ -8,7 +8,9 @@ define([
     // and backbone route filter,
     "backbone.routefilter",
     // our app requires moment
-    "moment"
+    "moment",
+    // our app requires bootstrap
+    "bootstrap"
 ], function($, Backbone, Router) {
     "use-strict";
 

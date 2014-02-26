@@ -7,6 +7,7 @@ require.config({
         "jquery": "lib/jquery-2.0.3",
         "text": "lib/text",
         "moment": "lib/moment.min",
+        "bootstrap": "lib/bootstrap",
         "game-model": "models/game-model",
         "schedule-collection": "models/schedule-collection",
         "session-model": "models/session-model",
@@ -14,6 +15,7 @@ require.config({
         "user-ui-data-model": "models/user-ui-data-model",
         "game-view": "views/game-view",
         "games-view": "views/games-view",
+        "header-view": "views/header-view",
         "session-view": "views/session-view",
         "router": "router",
         "app": "app"
@@ -31,6 +33,9 @@ require.config({
         },
         "backbone.routefilter": {
             deps: ["backbone"]
+        },
+        "bootstrap": {
+            deps: ["jquery"]
         }
     }
 });
