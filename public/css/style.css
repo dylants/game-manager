@@ -37,7 +37,7 @@ h1, h2 {
 }
 .game {
     padding: 1em;
-    border: 1px solid rgb(200, 200, 200);
+    border: 1px solid rgb(57, 113, 180);
     background-color: rgb(255, 255, 255);
     cursor: default;
 }
