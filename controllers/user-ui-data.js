@@ -242,7 +242,11 @@ function updateWatchedGameForUser(userId, watchedGame, callback) {
         // if no games watched yet for this sport, create one
         if (!gamesWatched) {
             gamesWatched = [];
-            user.sportsWatched.push(gamesWatched);
+            user.sportsWatched.push({
+                sport: watchedGame.sport,
+                games: gamesWatched
+            });
+            gamesWatched = user.sportsWatched[user.sportsWatched.length - 1].games;
         }
 
         // loop through the games watched looking for a matching game
