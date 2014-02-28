@@ -72,15 +72,12 @@ define([
             currentTime = new Date();
             currentTime = currentTime.valueOf();
 
-            // only trigger the event if the game is an available game
-            if (currentTime > availableGameTimeUTC) {
-                Backbone.trigger("game-marked-as-watched", game);
+            Backbone.trigger("game-marked-as-watched", game);
 
-                // set the game state as archived
-                this.gameState = "archived";
-                // re-render and move the element to archived
-                $(this.render().el).appendTo("#archived-games");
-            }
+            // set the game state as archived
+            this.gameState = "archived";
+            // re-render and move the element to archived
+            $(this.render().el).appendTo("#archived-games");
         }
     });
 });
