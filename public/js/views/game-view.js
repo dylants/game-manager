@@ -16,7 +16,8 @@ define([
             "click .notes-button": "editNotes",
             "click .update-notes-button": "updateNotes",
             "click .cancel-notes-button": "cancelNotes",
-            "click .watched-button": "watchedGame"
+            "click .watched-button": "watchedGame",
+            "click .undo-archived-button": "undoArchive"
         },
 
         initialize: function(options) {
@@ -63,14 +64,11 @@ define([
         },
 
         watchedGame: function(ev) {
-            var game, availableGameTimeUTC, currentTime;
+            var game;
 
             ev.preventDefault();
 
             game = this.model;
-            availableGameTimeUTC = (+game.availableGameTimeUTC);
-            currentTime = new Date();
-            currentTime = currentTime.valueOf();
 
             Backbone.trigger("game-marked-as-watched", game);
 
@@ -78,6 +76,29 @@ define([
             this.gameState = "archived";
             // re-render and move the element to archived
             $(this.render().el).appendTo("#archived-games");
+        },
+
+        undoArchive: function(ev) {
+            var game, availableGameTimeUTC, currentTime;
+
+            ev.preventDefault();
+
+            game = this.model;
+            Backbone.trigger("game-undo-archived", game);
+
+            availableGameTimeUTC = (+game.availableGameTimeUTC);
+            currentTime = new Date();
+            currentTime = currentTime.valueOf();
+            // set the game state and render location based on game time
+            if (currentTime > availableGameTimeUTC) {
+                this.gameState = "available";
+                // re-render and move the element
+                $(this.render().el).prependTo("#available-games");
+            } else {
+                this.gameState = "future";
+                // re-render and move the element
+                $(this.render().el).prependTo("#future-games");
+            }
         }
     });
 });

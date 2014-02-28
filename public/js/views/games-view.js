@@ -26,6 +26,7 @@ define([
             // setup for game interaction
             Backbone.on("game-marked-as-watched", this.markedGameAsWatched, this);
             Backbone.on("game-notes", this.setNoteForGame, this);
+            Backbone.on("game-undo-archived", this.undoArchivedGame, this);
 
             // setup for rendering more games
             this.availableGamesOffset = 0;
@@ -52,7 +53,7 @@ define([
 
         renderGames: function() {
             var availableGamesSelector, availableGames, futureGamesSelector,
-                futureGames;
+                futureGames, archivedGames;
 
             this.$el.html(this.template());
 
@@ -60,6 +61,7 @@ define([
             availableGames = this.model.get("availableGames");
             futureGamesSelector = $("#future-games");
             futureGames = this.model.get("futureGames");
+            archivedGames = this.model.get("archivedGames");
 
             // load (up to) 5 available games
             this.availableGamesOffset = this.renderMoreGames(availableGamesSelector,
@@ -75,6 +77,10 @@ define([
             // determine if we should hide the load more button
             if (this.futureGamesOffset >= futureGames.length) {
                 $("#more-future-games-button").hide();
+            }
+            // determine if we should hide the load more button
+            if (archivedGames.length < 1) {
+                $("#more-archived-games-button").hide();
             }
 
             return this;
@@ -119,6 +125,15 @@ define([
 
         markedGameAsWatched: function(game) {
             game.completed = true;
+            this.model.save({
+                game: game
+            }, {
+                patch: true
+            });
+        },
+
+        undoArchivedGame: function(game) {
+            game.completed = false;
             this.model.save({
                 game: game
             }, {
