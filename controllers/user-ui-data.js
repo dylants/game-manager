@@ -9,10 +9,12 @@ module.exports = function(app) {
         app.get("/user-ui-data/:id", function(req, res) {
             // first find the user based on the ID
             User.findById(req.params.id, function(err, user) {
-                var games, teams, count;
+                var userData, teams, count;
 
+                userData = {};
+                userData.teams = user.teams;
                 // stores all the games for this user
-                games = [];
+                userData.games = [];
 
                 // iterate over each team to find the games
                 teams = user.teams;
@@ -31,7 +33,7 @@ module.exports = function(app) {
                             if (err) {
                                 whilstCallback(err);
                             } else {
-                                games = games.concat(gamesForTeam);
+                                userData.games = userData.games.concat(gamesForTeam);
                                 whilstCallback();
                             }
                         });
@@ -45,9 +47,10 @@ module.exports = function(app) {
                             return;
                         }
 
-                        organizeGames(games, function(games) {
-                            // send the set of games back
-                            res.send(games);
+                        organizeGames(userData.games, function(games) {
+                            userData.games = games;
+                            // send back the user data
+                            res.send(userData);
                         });
                     }
                 );

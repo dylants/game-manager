@@ -1,4 +1,8 @@
+<% if (teamSelected) { %>
+<div class="team team-selected col-lg-4 col-md-4 col-sm-4 col-xs-6">
+<% } else { %>
 <div class="team col-lg-4 col-md-4 col-sm-4 col-xs-6">
+<% } %>
     <div class="team-content">
         <img class="team-logo" src="<%- logoHref %>"/>
         <div class="team-name"><%- city %> <%- mascot %></div>

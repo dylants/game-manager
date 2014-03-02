@@ -11,7 +11,6 @@ require.config({
         "game-model": "models/game-model",
         "session-model": "models/session-model",
         "teams-ui-model": "models/teams-ui-model",
-        "user-model": "models/user-model",
         "user-ui-data-model": "models/user-ui-data-model",
         "game-view": "views/game-view",
         "games-view": "views/games-view",

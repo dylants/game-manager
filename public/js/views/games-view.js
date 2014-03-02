@@ -51,16 +51,17 @@ define([
         },
 
         renderGames: function() {
-            var availableGamesSelector, availableGames, futureGamesSelector,
+            var model, availableGamesSelector, availableGames, futureGamesSelector,
                 futureGames, archivedGames;
 
             this.$el.html(this.template());
 
+            model = this.model.toJSON();
             availableGamesSelector = $("#available-games");
-            availableGames = this.model.get("availableGames");
+            availableGames = model.games.availableGames;
             futureGamesSelector = $("#future-games");
-            futureGames = this.model.get("futureGames");
-            archivedGames = this.model.get("archivedGames");
+            futureGames = model.games.futureGames;
+            archivedGames = model.games.archivedGames;
 
             // load (up to) 5 available games
             this.availableGamesOffset = this.renderMoreGames(availableGamesSelector,
@@ -141,14 +142,15 @@ define([
         },
 
         renderMoreAvailableGames: function(ev) {
-            var availableGames, availableGamesSelector;
+            var model, availableGames, availableGamesSelector;
 
             ev.preventDefault();
 
             // deselect the button
             ev.currentTarget.blur();
 
-            availableGames = this.model.get("availableGames");
+            model = this.model.toJSON();
+            availableGames = model.games.availableGames;
 
             // check to see if we need to do anything
             if (this.availableGamesOffset >= availableGames.length) {
@@ -169,14 +171,15 @@ define([
         },
 
         renderMoreFutureGames: function(ev) {
-            var futureGames, futureGamesSelector;
+            var model, futureGames, futureGamesSelector;
 
             ev.preventDefault();
 
             // deselect the button
             ev.currentTarget.blur();
 
-            futureGames = this.model.get("futureGames");
+            model = this.model.toJSON();
+            futureGames = model.games.futureGames;
 
             // check to see if we need to do anything
             if (this.futureGamesOffset >= futureGames.length) {
@@ -197,14 +200,15 @@ define([
         },
 
         renderMoreArchivedGames: function(ev) {
-            var archivedGames, archivedGamesSelector;
+            var model, archivedGames, archivedGamesSelector;
 
             ev.preventDefault();
 
             // deselect the button
             ev.currentTarget.blur();
 
-            archivedGames = this.model.get("archivedGames");
+            model = this.model.toJSON();
+            archivedGames = model.games.archivedGames;
 
             // check to see if we need to do anything
             if (this.archivedGamesOffset >= archivedGames.length) {
