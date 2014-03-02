@@ -6,8 +6,11 @@ define([
     "session-view",
     "user-ui-data-model",
     "games-view",
+    "teams-ui-model",
+    "teams-view",
     "header-view"
-], function(Backbone, $, SessionModel, SessionView, UserUiDataModel, GamesView, HeaderView) {
+], function(Backbone, $, SessionModel, SessionView, UserUiDataModel, GamesView,
+    TeamsUIModel, TeamsView, HeaderView) {
     "use strict";
 
     var Router = Backbone.Router.extend({
@@ -15,6 +18,7 @@ define([
             "": "games",
             "login": "login",
             "games": "games",
+            "teams": "teams",
             "*invalidRoute": "badRoute"
         },
 
@@ -83,7 +87,7 @@ define([
             this.currentView.render();
         },
 
-        games: function(queryParams) {
+        games: function() {
             var userModel;
 
             if (this.currentView) {
@@ -93,6 +97,22 @@ define([
             userModel = new UserUiDataModel([], this.sessionModel.get("_id"));
             this.currentView = new GamesView({
                 model: userModel
+            });
+            this.currentView.render();
+        },
+
+        teams: function() {
+            var teamsModel, userModel;
+
+            if (this.currentView) {
+                this.currentView.close();
+            }
+
+            teamsModel = new TeamsUIModel();
+            userModel = new UserUiDataModel([], this.sessionModel.get("_id"));
+            this.currentView = new TeamsView({
+                model: teamsModel,
+                userModel: userModel
             });
             this.currentView.render();
         },

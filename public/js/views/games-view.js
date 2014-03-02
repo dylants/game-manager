@@ -3,11 +3,10 @@ define([
     "backbone",
     "underscore",
     "jquery",
-    "schedule-collection",
     "game-view",
     "game-model",
     "text!../templates/games.html"
-], function(Backbone, _, $, ScheduleCollection, GameView, GameModel, gamesHtml) {
+], function(Backbone, _, $, GameView, GameModel, gamesHtml) {
     "use strict";
 
     return Backbone.View.extend({
