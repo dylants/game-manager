@@ -42,6 +42,11 @@ define([
         navToGames: function(ev) {
             ev.preventDefault();
 
+            // toggle the navbar if necessary
+            if (!$(".navbar-header button").is(":hidden")) {
+                $(".collapse").collapse("toggle");
+            }
+
             Backbone.history.navigate("games", {
                 trigger: true
             });
@@ -49,6 +54,11 @@ define([
 
         navToTeams: function(ev) {
             ev.preventDefault();
+
+            // toggle the navbar if necessary
+            if (!$(".navbar-header button").is(":hidden")) {
+                $(".collapse").collapse("toggle");
+            }
 
             Backbone.history.navigate("teams", {
                 trigger: true
