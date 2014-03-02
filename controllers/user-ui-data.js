@@ -1,4 +1,5 @@
 var async = require("async"),
+    teamSchedule = require("../lib/team-schedule"),
     mongoose = require("mongoose"),
     User = mongoose.model("User"),
     Team = mongoose.model("Team");
@@ -72,7 +73,7 @@ module.exports = function(app) {
                     res.send(200);
                 });
             } else if (req.body.teams) {
-                updateTeamsForUser(req.params.id, req.body.teams, function(err) {
+                updateTeamsForUser(req.params.id, req.body.teams, app, function(err) {
                     if (err) {
                         console.error(err);
                         res.send(500, {
@@ -273,16 +274,18 @@ function updateWatchedGameForUser(userId, watchedGame, callback) {
             });
         }
 
-        // save the updated game
+        // save the updated user
         user.save(function(err, user) {
             callback(err);
         });
     });
 }
 
-function updateTeamsForUser(userId, teams, callback) {
+function updateTeamsForUser(userId, teams, app, callback) {
     // update the teams for the user
     User.findById(userId, function(err, user) {
+        var count;
+
         if (err) {
             callback(err);
             return;
@@ -292,12 +295,39 @@ function updateTeamsForUser(userId, teams, callback) {
             return;
         }
 
-        // update the teams to the input
-        user.teams = teams;
+        count = 0;
+        // iterate over all the teams
+        async.whilst(
+            function() {
+                return count < teams.length;
+            },
+            function(whilstCallback) {
+                var team;
 
-        // save the updated game
-        user.save(function(err, user) {
-            callback(err);
-        });
+                team = teams[count];
+                count++;
+
+                // for each team, update it's schedule
+                teamSchedule.update(team.sport, team.team, app,
+                    function(err) {
+                        whilstCallback(err);
+                    }
+                );
+            },
+            function(err) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+
+                // set the user's teams to these teams
+                user.teams = teams;
+
+                // save the updated user
+                user.save(function(err, user) {
+                    callback(err);
+                });
+            }
+        );
     });
 }

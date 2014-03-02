@@ -1,19 +1,6 @@
-var csv = require("csv"),
-    request = require("request"),
-    async = require("async"),
-    NHLGameBuilder = require("../lib/nhl-game-builder"),
-    NBAGameBuilder = require("../lib/nba-game-builder"),
-    teamSchedule = require("../lib/team-schedule"),
+var teamSchedule = require("../lib/team-schedule"),
     mongoose = require("mongoose"),
     Team = mongoose.model("Team");
-
-function getNHLScheduleUrl(team) {
-    return "http://" + team + ".nhl.com/schedule/full.csv";
-}
-
-function getNBAScheduleUrl(team) {
-    return "http://www.nba.com/" + team + "/schedule/2013/schedule.csv";
-}
 
 function getTeamSchedule(sport, teamName, res) {
     Team.findOne({
@@ -34,23 +21,8 @@ function getTeamSchedule(sport, teamName, res) {
     });
 }
 
-function updateSchedule(sport, teamName, rowHeaderIndexes, app, res) {
-    var gameBuilder, scheduleUrl;
-
-    if (sport === "NHL") {
-        gameBuilder = new NHLGameBuilder();
-        scheduleUrl = getNHLScheduleUrl(teamName);
-    } else if (sport === "NBA") {
-        gameBuilder = new NBAGameBuilder();
-        scheduleUrl = getNBAScheduleUrl(teamName);
-    } else {
-        console.error("Unrecognized sport: " + sport);
-        res.send(500);
-        return;
-    }
-
-    teamSchedule.update(scheduleUrl, sport, teamName, rowHeaderIndexes,
-        gameBuilder, app,
+function updateSchedule(sport, teamName, app, res) {
+    teamSchedule.update(sport, teamName, app,
         function(err) {
             if (err) {
                 console.log(err);
@@ -75,13 +47,7 @@ module.exports = function(app) {
         });
 
         app.get("/nhl/teams/:team/update-schedule", function(req, res) {
-            updateSchedule("NHL", req.params.team, {
-                date: 0,
-                time: 1,
-                teams: 3,
-                location: 4,
-                description: 5
-            }, app, res);
+            updateSchedule("NHL", req.params.team, app, res);
         });
 
         /***********
@@ -93,13 +59,7 @@ module.exports = function(app) {
         });
 
         app.get("/nba/teams/:team/update-schedule", function(req, res) {
-            updateSchedule("NBA", req.params.team, {
-                date: 1,
-                time: 2,
-                teams: 0,
-                location: 3,
-                description: 4
-            }, app, res);
+            updateSchedule("NBA", req.params.team, app, res);
         });
     });
 };
