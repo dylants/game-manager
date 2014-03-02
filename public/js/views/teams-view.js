@@ -24,6 +24,12 @@ define([
             Backbone.on("team-removed", this.teamRemoved, this);
         },
 
+        close: function() {
+            // release all event listeners
+            this.stopListening();
+            this.$el.off("click");
+        },
+
         render: function() {
             var view;
 

@@ -12,7 +12,11 @@ define([
 
         template: _.template(headerHtml),
 
-        events: {},
+        events: {
+            "click #game-manager-link": "navToGameManager",
+            "click #games-link": "navToGames",
+            "click #teams-link": "navToTeams"
+        },
 
         initialize: function() {},
 
@@ -25,6 +29,30 @@ define([
         render: function() {
             this.$el.html(this.template());
             return this;
+        },
+
+        navToGameManager: function(ev) {
+            ev.preventDefault();
+
+            Backbone.history.navigate("", {
+                trigger: true
+            });
+        },
+
+        navToGames: function(ev) {
+            ev.preventDefault();
+
+            Backbone.history.navigate("games", {
+                trigger: true
+            });
+        },
+
+        navToTeams: function(ev) {
+            ev.preventDefault();
+
+            Backbone.history.navigate("teams", {
+                trigger: true
+            });
         }
     });
 });

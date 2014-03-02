@@ -15,7 +15,7 @@ define([
 
     var Router = Backbone.Router.extend({
         routes: {
-            "": "games",
+            "": "gameManager",
             "login": "login",
             "games": "games",
             "teams": "teams",
@@ -38,8 +38,8 @@ define([
                 this.sessionModel = new SessionModel();
             }
 
-            if (route === "login") {
-                // allow those to go through without any problems
+            // allow these routes to go through without any problems
+            if (route === "" || route === "login") {
                 return true;
             }
 
@@ -74,6 +74,16 @@ define([
         routeCalled: function(routeCalled, args) {
             // scroll to the top of the window on every route call
             window.scrollTo(0, 0);
+        },
+
+        gameManager: function() {
+            // because of our security management in the before
+            // filter, here we'll redirect to /games directly rather
+            // than sending "" to "games" (which in the end, does
+            // not setup the URL correctly)
+            Backbone.history.navigate("games", {
+                trigger: true
+            });
         },
 
         login: function() {
