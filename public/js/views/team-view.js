@@ -20,6 +20,12 @@ define([
             this.teamSelected = options.teamSelected;
         },
 
+        close: function() {
+            // release all event listeners
+            this.stopListening();
+            this.$el.off("click");
+        },
+
         render: function() {
             this.$el.html(this.template(_.extend({}, this.model, {
                 teamSelected: this.teamSelected

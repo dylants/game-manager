@@ -34,10 +34,25 @@ define([
             // amount of games to load each button press
             this.amountOfGamesToLoad = 10;
 
+            // keep track of child views
+            this.childViews = [];
+
             this.model.on("sync", this.renderGames, this);
         },
 
         close: function() {
+            var i;
+
+            // close all child views
+            for (i = 0; i < this.childViews.length; i++) {
+                this.childViews[i].close();
+            }
+
+            // stop listening to the events
+            Backbone.off("game-marked-as-watched");
+            Backbone.off("game-notes");
+            Backbone.off("game-undo-archived");
+
             // release all event listeners
             this.stopListening();
             this.$el.off("click");
@@ -108,6 +123,9 @@ define([
                 });
 
                 gamesSelector.append(gameView.render().el);
+
+                // add this view to our list of child views
+                this.childViews.push(gameView);
             }
 
             // return the amount of games loaded + offset

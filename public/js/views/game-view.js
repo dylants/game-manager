@@ -25,6 +25,12 @@ define([
             this.notes = options.notes;
         },
 
+        close: function() {
+            // release all event listeners
+            this.stopListening();
+            this.$el.off("click");
+        },
+
         render: function() {
             this.$el.html(this.template(_.extend({}, this.model, {
                 notes: this.notes,

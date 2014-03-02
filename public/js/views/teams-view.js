@@ -19,12 +19,26 @@ define([
         initialize: function(args) {
             this.userModel = args.userModel;
 
+            // keep track of child views
+            this.childViews = [];
+
             // setup for team adding/deleting
             Backbone.on("team-added", this.teamAdded, this);
             Backbone.on("team-removed", this.teamRemoved, this);
         },
 
         close: function() {
+            var i;
+
+            // close all child views
+            for (i = 0; i < this.childViews.length; i++) {
+                this.childViews[i].close();
+            }
+
+            // stop listening to the events
+            Backbone.off("team-added");
+            Backbone.off("team-removed");
+
             // release all event listeners
             this.stopListening();
             this.$el.off("click");
@@ -68,6 +82,9 @@ define([
                     teamSelected: view.isTeamSelected(team)
                 });
                 selector.append(teamView.render().el);
+
+                // add this view to our list of child views
+                view.childViews.push(teamView);
             });
         },
 
