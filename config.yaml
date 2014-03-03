@@ -385,3 +385,227 @@ nba:
             conference: "Western"
             division: "Pacific"
             logoHref: "/public/img/nba/teams/kings.gif"
+# ==========
+# MLB Config
+# ==========
+mlb:
+    logoHref: "/public/img/mlb/mlb-logo.png"
+    teams:
+        # ==== AMERICAN LEAGUE ====
+        # AL East
+        -
+            city: "Baltimore"
+            mascot: "Orioles"
+            conference: "American League"
+            division: "AL East"
+            logoHref: "/public/img/mlb/teams/bal.png"
+            teamId: 110
+        -
+            city: "Boston"
+            mascot: "Red Socks"
+            conference: "American League"
+            division: "AL East"
+            logoHref: "/public/img/mlb/teams/bos.png"
+            teamId: 111
+        -
+            city: "New York"
+            mascot: "Yankees"
+            conference: "American League"
+            division: "AL East"
+            logoHref: "/public/img/mlb/teams/nyy.png"
+            teamId: 147
+        -
+            city: "Tampa Bay"
+            mascot: "Rays"
+            conference: "American League"
+            division: "AL East"
+            logoHref: "/public/img/mlb/teams/tb.png"
+            teamId: 139
+        -
+            city: "Toronto"
+            mascot: "Blue Jays"
+            conference: "American League"
+            division: "AL East"
+            logoHref: "/public/img/mlb/teams/tor.png"
+            teamId: 141
+        # AL Central
+        -
+            city: "Chicago"
+            mascot: "White Sox"
+            conference: "American League"
+            division: "AL Central"
+            logoHref: "/public/img/mlb/teams/cws.png"
+            teamId: 145
+        -
+            city: "Cleveland"
+            mascot: "Indians"
+            conference: "American League"
+            division: "AL Central"
+            logoHref: "/public/img/mlb/teams/cle.png"
+            teamId: 114
+        -
+            city: "Detroit"
+            mascot: "Tigers"
+            conference: "American League"
+            division: "AL Central"
+            logoHref: "/public/img/mlb/teams/det.png"
+            teamId: 116
+        -
+            city: "Kansas City"
+            mascot: "Royals"
+            conference: "American League"
+            division: "AL Central"
+            logoHref: "/public/img/mlb/teams/kc.png"
+            teamId: 118
+        -
+            city: "Minnesota"
+            mascot: "Twins"
+            conference: "American League"
+            division: "AL Central"
+            logoHref: "/public/img/mlb/teams/min.png"
+            teamId: 142
+        # AL West
+        -
+            city: "Houston"
+            mascot: "Astros"
+            conference: "American League"
+            division: "AL West"
+            logoHref: "/public/img/mlb/teams/hou.png"
+            teamId: 117
+        -
+            city: "Los Angeles"
+            mascot: "Angels"
+            conference: "American League"
+            division: "AL West"
+            logoHref: "/public/img/mlb/teams/ana.png"
+            teamId: 108
+        -
+            city: "Oakland"
+            mascot: "Athletics"
+            conference: "American League"
+            division: "AL West"
+            logoHref: "/public/img/mlb/teams/oak.png"
+            teamId: 133
+        -
+            city: "Seattle"
+            mascot: "Mariners"
+            conference: "American League"
+            division: "AL West"
+            logoHref: "/public/img/mlb/teams/sea.png"
+            teamId: 136
+        -
+            city: "Texas"
+            mascot: "Rangers"
+            conference: "American League"
+            division: "AL West"
+            logoHref: "/public/img/mlb/teams/tex.png"
+            teamId: 140
+        # ==== NATIONAL LEAGUE ====
+        # NL East
+        -
+            city: "Atlanta"
+            mascot: "Braves"
+            conference: "National League"
+            division: "NL East"
+            logoHref: "/public/img/mlb/teams/atl.png"
+            teamId: 144
+        -
+            city: "Miami"
+            mascot: "Marlins"
+            conference: "National League"
+            division: "NL East"
+            logoHref: "/public/img/mlb/teams/mia.png"
+            teamId: 146
+        -
+            city: "New York"
+            mascot: "Mets"
+            conference: "National League"
+            division: "NL East"
+            logoHref: "/public/img/mlb/teams/nym.png"
+            teamId: 121
+        -
+            city: "Philadelphia"
+            mascot: "Phillies"
+            conference: "National League"
+            division: "NL East"
+            logoHref: "/public/img/mlb/teams/phi.png"
+            teamId: 143
+        -
+            city: "Washington"
+            mascot: "Nationals"
+            conference: "National League"
+            division: "NL East"
+            logoHref: "/public/img/mlb/teams/was.png"
+            teamId: 120
+        # NL Central
+        -
+            city: "Chicago"
+            mascot: "Cubs"
+            conference: "National League"
+            division: "NL Central"
+            logoHref: "/public/img/mlb/teams/chc.png"
+            teamId: 112
+        -
+            city: "Cincinnati"
+            mascot: "Reds"
+            conference: "National League"
+            division: "NL Central"
+            logoHref: "/public/img/mlb/teams/cin.png"
+            teamId: 113
+        -
+            city: "Milwaukee"
+            mascot: "Brewers"
+            conference: "National League"
+            division: "NL Central"
+            logoHref: "/public/img/mlb/teams/mil.png"
+            teamId: 158
+        -
+            city: "Pittsburgh"
+            mascot: "Pirates"
+            conference: "National League"
+            division: "NL Central"
+            logoHref: "/public/img/mlb/teams/pit.png"
+            teamId: 134
+        -
+            city: "St. Louis"
+            mascot: "Cardinals"
+            conference: "National League"
+            division: "NL Central"
+            logoHref: "/public/img/mlb/teams/stl.png"
+            teamId: 138
+        # NL West
+        -
+            city: "Arizona"
+            mascot: "Diamondbacks"
+            conference: "National League"
+            division: "NL West"
+            logoHref: "/public/img/mlb/teams/ari.png"
+            teamId: 109
+        -
+            city: "Colorado"
+            mascot: "Rockies"
+            conference: "National League"
+            division: "NL West"
+            logoHref: "/public/img/mlb/teams/col.png"
+            teamId: 115
+        -
+            city: "Los Angeles"
+            mascot: "Dodgers"
+            conference: "National League"
+            division: "NL West"
+            logoHref: "/public/img/mlb/teams/la.png"
+            teamId: 119
+        -
+            city: "San Diego"
+            mascot: "Padres"
+            conference: "National League"
+            division: "NL West"
+            logoHref: "/public/img/mlb/teams/sd.png"
+            teamId: 135
+        -
+            city: "San Francisco"
+            mascot: "Giants"
+            conference: "National League"
+            division: "NL West"
+            logoHref: "/public/img/mlb/teams/sf.png"
+            teamId: 137
