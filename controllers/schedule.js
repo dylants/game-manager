@@ -22,17 +22,22 @@ function getTeamSchedule(sport, teamName, res) {
 }
 
 function updateSchedule(sport, teamName, app, res) {
-    teamSchedule.update(sport, teamName, app,
-        function(err) {
-            if (err) {
-                console.log(err);
-                res.send(500);
-                return;
-            }
+    Team.findOne({
+        sport: sport,
+        name: teamName
+    }, function(err, team) {
+        teamSchedule.update(sport, teamName, team.teamId, app,
+            function(err) {
+                if (err) {
+                    console.log(err);
+                    res.send(500);
+                    return;
+                }
 
-            res.send("done!");
-        }
-    );
+                res.send("done!");
+            }
+        );
+    });
 }
 
 module.exports = function(app) {
@@ -61,5 +66,18 @@ module.exports = function(app) {
         app.get("/nba/teams/:team/update-schedule", function(req, res) {
             updateSchedule("NBA", req.params.team, app, res);
         });
+
+        /***********
+         *** MLB ***
+         ***********/
+
+        app.get("/mlb/teams/:team/schedule", function(req, res) {
+            getTeamSchedule("MLB", req.params.team, res);
+        });
+
+        app.get("/mlb/teams/:team/update-schedule", function(req, res) {
+            updateSchedule("MLB", req.params.team, app, res);
+        });
+
     });
 };

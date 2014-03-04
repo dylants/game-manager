@@ -43,13 +43,15 @@ function getTeam(sport, teamName, res) {
     });
 }
 
-function importTeams(sport, res) {
+function importTeams(sport, app, res) {
     var config, teams, team, i;
 
     if (sport === "NHL") {
         config = app.get("config").nhl;
     } else if (sport === "NBA") {
         config = app.get("config").nba;
+    } else if (sport === "MLB") {
+        config = app.get("config").mlb;
     } else {
         console.error("Unrecognized sport: " + sport);
         res.send(500);
@@ -66,7 +68,8 @@ function importTeams(sport, res) {
             sport: sport,
             conference: teams[i].conference,
             division: teams[i].division,
-            logoHref: teams[i].logoHref
+            logoHref: teams[i].logoHref,
+            teamId: teams[i].teamId
         });
         team.save();
     }
@@ -89,7 +92,7 @@ module.exports = function(app) {
         });
 
         app.get("/nhl/import-teams", function(req, res) {
-            importTeams("NHL", res);
+            importTeams("NHL", app, res);
         });
 
         /***********
@@ -105,7 +108,23 @@ module.exports = function(app) {
         });
 
         app.get("/nba/import-teams", function(req, res) {
-            importTeams("NBA", res);
+            importTeams("NBA", app, res);
+        });
+
+        /***********
+         *** MLB ***
+         ***********/
+
+        app.get("/mlb/teams", function(req, res) {
+            getTeams("MLB", res);
+        });
+
+        app.get("/mlb/teams/:team", function(req, res) {
+            getTeam("MLB", req.params.team, res);
+        });
+
+        app.get("/mlb/import-teams", function(req, res) {
+            importTeams("MLB", app, res);
         });
 
     });

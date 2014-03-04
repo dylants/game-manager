@@ -129,7 +129,8 @@ h1, h2, h3 {
         margin-left: 1em;
     }
     .sport-logo {
-        height: 3em;
+        max-height: 3em;
+        max-width: 3em;
     }
     .cancel-notes-button {
         margin-left: 1em;
@@ -170,7 +171,7 @@ h1, h2, h3 {
         margin-left: 1.75em;
     }
     .sport-logo {
-        width: 2em;
+        width: 2.2em;
         padding-bottom: 2em;
     }
     .sport-logo-div {

@@ -64,6 +64,7 @@ define([
         renderSports: function() {
             this.renderTeams($("#nhl-teams"), this.model.get("NHL"));
             this.renderTeams($("#nba-teams"), this.model.get("NBA"));
+            this.renderTeams($("#mlb-teams"), this.model.get("MLB"));
         },
 
         renderTeams: function(selector, teams) {

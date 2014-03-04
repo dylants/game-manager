@@ -308,11 +308,16 @@ function updateTeamsForUser(userId, teams, app, callback) {
                 count++;
 
                 // for each team, update it's schedule
-                teamSchedule.update(team.sport, team.team, app,
-                    function(err) {
-                        whilstCallback(err);
-                    }
-                );
+                Team.findOne({
+                    sport: team.sport,
+                    name: team.team
+                }, function(err, team) {
+                    teamSchedule.update(team.sport, team.name, team.teamId, app,
+                        function(err) {
+                            whilstCallback(err);
+                        }
+                    );
+                });
             },
             function(err) {
                 if (err) {
