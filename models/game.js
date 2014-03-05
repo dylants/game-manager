@@ -8,8 +8,8 @@ var GameSchema = new Schema({
     sportLogoHref: {
         type: String
     },
-    gameTimeUTC: {
-        type: Number
+    gameTime: {
+        type: Date
     },
     awayTeamName: {
         type: String
@@ -44,8 +44,8 @@ var GameSchema = new Schema({
     isBlackedOut: {
         type: Boolean
     },
-    availableGameTimeUTC: {
-        type: Number
+    availableGameTime: {
+        type: Date
     }
 });
 

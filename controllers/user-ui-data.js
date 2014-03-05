@@ -114,7 +114,7 @@ function addGamesForTeam(team, user, callback) {
         teamGames = team.schedule.toObject();
 
         // current time is used to calculate the game state
-        currentTime = (new Date()).valueOf();
+        currentTime = new Date();
 
         // loop over these games to optionally add watched information
         for (teamGamesCounter = 0; teamGamesCounter < teamGames.length; teamGamesCounter++) {
@@ -135,7 +135,7 @@ function addGamesForTeam(team, user, callback) {
                 teamGame.gameState = "archived";
             } else {
                 // if we haven't, is it available to watch?
-                if (currentTime > teamGame.availableGameTimeUTC) {
+                if (currentTime > teamGame.availableGameTime) {
                     teamGame.gameState = "available";
                 } else {
                     teamGame.gameState = "future";
@@ -178,10 +178,10 @@ function organizeGames(games, callback) {
 
     // now that we've got all the games, sort them
     games.sort(function(gameA, gameB) {
-        // sort them by the game time UTC
-        if (gameA.gameTimeUTC > gameB.gameTimeUTC) {
+        // sort them by the game time
+        if (gameA.gameTime > gameB.gameTime) {
             return 1;
-        } else if (gameB.gameTimeUTC > gameA.gameTimeUTC) {
+        } else if (gameB.gameTime > gameA.gameTime) {
             return -1;
         } else {
             return 0;

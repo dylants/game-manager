@@ -85,18 +85,17 @@ define([
         },
 
         undoArchive: function(ev) {
-            var game, availableGameTimeUTC, currentTime;
+            var game, availableGameTime, currentTime;
 
             ev.preventDefault();
 
             game = this.model;
             Backbone.trigger("game-undo-archived", game);
 
-            availableGameTimeUTC = (+game.availableGameTimeUTC);
+            availableGameTime = game.availableGameTime;
             currentTime = new Date();
-            currentTime = currentTime.valueOf();
             // set the game state and render location based on game time
-            if (currentTime > availableGameTimeUTC) {
+            if (currentTime > availableGameTime) {
                 this.gameState = "available";
                 // re-render and move the element
                 $(this.render().el).prependTo("#available-games");
