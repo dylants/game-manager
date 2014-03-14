@@ -1,79 +1,60 @@
 # game-manager #
 
-Provides a way to keep track of games available to watch, by tracking team schedules and
-blackout dates. This is done on a per-user basis, so each user has a list of available
-games, and can add details on the game currently being watched (current inning/quarter/period)
-along with specifying if the game has been watched.
+This application came about because of all the online sport packages available (MLB.tv,
+NHL Game Center, NBA League Pass, etc). These are great, and allow you to follow your
+favorite team even without cable TV. One problem with these is understanding which game
+is blacked out and not available until hours later, or which games someone can have
+available to watch at any given time (games tend to build up in a queue this way).
 
-## Authentication ##
+The game-manager application provides a way to keep track of these games that are
+available to watch, by tracking team schedules along with the game blackout dates (and
+posting when the game *will* be available to watch). Each user initially selects the
+teams they would like to follow, and games are populated on a game queue page. The user
+can add game notes (where they are in the game) so they can easily return to the game
+later. The user can also marked a game as "watched" which will move it to an archive
+section, removing it from the available games to watch. Upcoming games and game times
+are displayed as well.
 
-All routes under <code>/api</code> require an authenticated user (all users are authorized).
-A user is modeled via Mongoose and the
-<a href="https://github.com/dylants/game-manager/blob/master/models/user.js">
-<code>User</code></a> schema. To create a user, execute the following code:
+## Initial Setup ##
 
-```JavaScript
-var User = require("mongoose").model("User");
+The game-manager application is a Node.js application, and as such, requires Node.js.
+With Node installed, install dependencies with the command: <code>npm install</code>.
 
-var user = new User({
-    username: "my_user_name",
-    password: "my_user_password"
-});
-user.save();
-```
-After which you can navigate to the game manager UI to login (at
-<code>/game-manager/login</code>) using the username and password specified above. Note that
-this is required to access almost all function within the application.
+This application requires a Mongo database to store teams, games, and users
+of the system. The application expects the Mongo database to be available locally, and
+uses the database name "game". No authentication is expected, just simply start
+the Mongo database.
 
-## Teams ##
+This application comes with a configuration file which specifies all the teams for each
+sport, along with logos and other team attributes. A setup file has been created which
+will iterate over this file and create each team in the Mongo database. This is only
+necessary initially to populate the database with all available teams.
 
-Teams are defined, by sport, in the <code>config.yaml</code> file. This file contains a list
-of teams for the sport, along with details on that team (name, conference, division, logo, etc).
-During initial setup, these teams can be imported into the database:
+The setup configuration file also creates a user which you would use to login and
+track team games. The username and password for this user should be specified in the
+setup file (one has been specified for you with username "my_user_name" and password
+"my_user_password").
 
-### Import NHL Teams ###
+Open up the setup.js file found in the root directory of this project, and update
+any configuration options you would like to change. To execute the file, run
+<code>node setup.js</code> from the same directory. Be sure and have the Mongo
+database up and running locally prior to running the setup.
 
-To import NHL teams, navigate to <code>/api/nhl/import-teams</code>. This
-will loop over the NHL teams and add each to the backend database, using the
-<a href="https://github.com/dylants/game-manager/blob/master/models/team.js">
-<code>Team</code></a> Mongoose schema. This only needs to be done once.
+Once setup is complete, you can start the application using <code>npm start</code>
+or <code>node app.js</code>.
 
-### Import NBA Teams ###
+## Game Manager UI ##
 
-To import NBA teams, navigate to <code>/api/nba/import-teams</code>. This
-will loop over the NBA teams and add each to the backend database, using the
-<a href="https://github.com/dylants/game-manager/blob/master/models/team.js">
-<code>Team</code></a> Mongoose schema. This only needs to be done once.
+With the application running, navigate to it from a browser (for instance, running
+it locally will launch the application on http://localhost:3000). You will be prompted
+to login with the username/password created during the setup process above. Once
+logged in, you can navigate to the Teams section to select teams you would like to
+track. (Selecting a team also adds the games for the team to the Mongo database.) With
+the teams selected, navigate to the Games section to see the list of Available, Upcoming,
+and Archived games for your user.
 
-## Team Schedule ##
-
-Once the teams for the sport are imported,
-<a href="https://github.com/dylants/game-manager/blob/master/models/game.js">
-<code>Game</code></a>s can be created for each team's schedule. <code>Game</code>s
-are created by first reading a team's schedule online (usually via a CSV file) and
-importing that data into a <code>Game</code>. A new <code>Game</code> is only
-created if one does not exist (games are shared between two teams). After the
-initial creation of a <code>Team</code>'s <code>Game</code>s, updating the
-<code>Game</code>s can be done at any time (since a team's schedule may
-change throughout the season).
-
-### Import/Update an NHL Team's Schedule ###
-
-To import/update an NHL team's schedule, navigate to
-<code>/api/nhl/teams/{teamName}/update-schedule</code> where <code>{teamName}</code> is the
-name of the team's schedule to update. For instance, to import the San Jose Sharks'
-schedule, navigate to <code>/api/nhl/teams/sharks/update-schedule</code>.
-
-### Import/Update an NBA Team's Schedule ###
-
-To import/update an NBA team's schedule, navigate to
-<code>/api/nba/teams/{teamName}/update-schedule</code> where <code>{teamName}</code> is the
-name of the team's schedule to update. For instance, to import the Boston Celtics'
-schedule, navigate to <code>/api/nhl/teams/celtics/update-schedule</code>.
-
-## Tracking a Team's Schedule ##
-
-With teams and team schedules imported, a <code>User</code> can track a <code>Team</code>'s
-<code>Game</code>s by adding the <code>Team</code> to those tracked by the <code>User</code>.
-To do so, navigate to the UI, login, and add the team. More information to follow...
-
+Add game notes when watching a game to keep track of the current inning/period/quarter
+you are watching, so that you can return to it later. Mark a game as "watched" to move
+it from Available to Archived. View Upcoming games to see future games available and
+their time and date. Blacked out games will be marked with two times, the first is the
+actual game time (marked lighter) and the second is the available time to watch.
