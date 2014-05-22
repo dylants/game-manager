@@ -6,7 +6,7 @@
         "url": "https://github.com/dylants/game-manager.git"
     },
     "scripts": {
-        "start": "nodemon app.js",
+        "start": "nodemon --ignore 'node_modules/**' app.js",
         "test": "./node_modules/.bin/mocha --recursive -R spec test/ -t 5000"
     },
     "dependencies": {
@@ -14,7 +14,7 @@
         "bcrypt": "^0.7.7",
         "consolidate": "^0.10.0",
         "csv": "^0.3.6",
-        "express": "^3",
+        "express": "3.4.7",
         "express-namespace": "^0.1.1",
         "ical": "^0.2.0",
         "js-yaml": "^3.0.0",
