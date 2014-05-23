@@ -1,5 +1,7 @@
 # game-manager #
 
+<img src="https://cloud.githubusercontent.com/assets/1596740/3062314/0af4e9ac-e21b-11e3-9db0-513c65a526a9.png">
+
 This application came about because of all the online sport packages available (MLB.tv,
 NHL Game Center, NBA League Pass, etc). These are great, and allow you to follow your
 favorite team even without cable TV. One problem with these is understanding which game
