@@ -61,7 +61,7 @@ module.exports = function(app) {
                     userData.games = userData.games.concat(gamesForTeam);
                 }
 
-                // userData.games = organizeGames(userData.games);
+                userData.games = organizeGames(userData.games);
                 res.send(userData);
             });
         });
