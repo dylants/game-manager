@@ -1,3 +1,5 @@
+"use strict";
+
 var async = require("async"),
     teamSchedule = require("../lib/team-schedule"),
     mongoose = require("mongoose"),
@@ -8,9 +10,30 @@ module.exports = function(app) {
     app.namespace("/api", function() {
 
         app.get("/user-ui-data", function(req, res) {
-            // first find the user based on the ID
-            User.findById(req.user.id, function(err, user) {
-                var userData, currentTime, teams, count;
+            async.parallel([
+                // find the user
+                function(parallelCallback) {
+                    findUser(req.user.id, parallelCallback);
+                },
+                // load all games for all teams
+                function(parallelCallback) {
+                    findAllTeamsGames(parallelCallback);
+                }
+            ], function(err, results) {
+                var user, allGamesForAllTeams, userData, currentTime, teams,
+                    teamsCounter, team, userGamesWatched, allGamesForTeam, gamesForTeam;
+
+                if (err) {
+                    console.error(err);
+                    res.send(500, {
+                        "error": err
+                    });
+                    return;
+                }
+
+                // grab the user and gamesForTeams
+                user = results[0];
+                allGamesForAllTeams = results[1];
 
                 userData = {};
                 userData.teams = user.teams;
@@ -22,42 +45,24 @@ module.exports = function(app) {
 
                 // iterate over each team to find the games
                 teams = user.teams;
-                count = 0;
-                async.whilst(
-                    function() {
-                        return count < teams.length;
-                    },
-                    function(whilstCallback) {
-                        var team;
+                for (teamsCounter = 0; teamsCounter < teams.length; teamsCounter++) {
+                    team = teams[teamsCounter];
 
-                        team = teams[count];
-                        count++;
+                    // get the games watched for that team's sport
+                    userGamesWatched = getGamesWatched(user, team.sport);
 
-                        addGamesForTeam(team, user, currentTime, function(err, gamesForTeam) {
-                            if (err) {
-                                whilstCallback(err);
-                            } else {
-                                userData.games = userData.games.concat(gamesForTeam);
-                                whilstCallback();
-                            }
-                        });
-                    },
-                    function(err) {
-                        if (err) {
-                            console.error(err);
-                            res.send(500, {
-                                "error": err
-                            });
-                            return;
-                        }
+                    // grab all the games for this team
+                    allGamesForTeam = allGamesForAllTeams[team.team + ":" + team.sport];
 
-                        organizeGames(userData.games, function(games) {
-                            userData.games = games;
-                            // send back the user data
-                            res.send(userData);
-                        });
-                    }
-                );
+                    // get the games for the team
+                    gamesForTeam = addGamesForTeam(allGamesForTeam, userGamesWatched, currentTime);
+
+                    // add them to our games list
+                    userData.games = userData.games.concat(gamesForTeam);
+                }
+
+                // userData.games = organizeGames(userData.games);
+                res.send(userData);
             });
         });
 
@@ -97,58 +102,66 @@ module.exports = function(app) {
     });
 };
 
-function addGamesForTeam(team, user, currentTime, callback) {
-    // find the matching team object, populating it's schedule of games
-    Team.findOne({
-        sport: team.sport,
-        name: team.team
-    }).populate("schedule").exec(function(err, team) {
-        var games, teamGames, teamGamesCounter, teamGame,
-            userGamesWatched, i;
+function findUser(userId, callback) {
+    User.findById(userId, function(err, user) {
+        callback(err, user);
+    });
+}
+
+function findAllTeamsGames(callback) {
+    Team.find().populate("schedule").exec(function(err, teams) {
+        var gamesForTeams, i, team;
 
         if (err) {
             callback(err);
             return;
         }
 
-        games = [];
+        gamesForTeams = {};
 
-        // get the games for the team
-        teamGames = team.schedule.toObject();
-
-        // if the game has been viewed, update it
-        userGamesWatched = getGamesWatched(user, team.sport);
-
-        // loop over these games to optionally add watched information
-        for (teamGamesCounter = 0; teamGamesCounter < teamGames.length; teamGamesCounter++) {
-            teamGame = teamGames[teamGamesCounter].toObject();
-
-            for (i = 0; i < userGamesWatched.length; i++) {
-                if (userGamesWatched[i].game.toJSON() == teamGame._id.toJSON()) {
-                    teamGame.notes = userGamesWatched[i].notes;
-                    teamGame.completed = userGamesWatched[i].completed;
-                    break;
-                }
-            }
-
-            // set the game state based off if viewed or current time
-            if (teamGame.completed) {
-                teamGame.gameState = "archived";
-            } else {
-                // if we haven't, is it available to watch?
-                if (currentTime > teamGame.availableGameTime) {
-                    teamGame.gameState = "available";
-                } else {
-                    teamGame.gameState = "future";
-                }
-            }
-
-            // add the game to our user's game
-            games.push(teamGame);
+        for (i = 0; i < teams.length; i++) {
+            team = teams[i];
+            gamesForTeams[team.name + ":" + team.sport] = team.schedule.toObject();
         }
 
-        callback(null, games);
+        callback(null, gamesForTeams);
     });
+}
+
+function addGamesForTeam(teamGames, userGamesWatched, currentTime) {
+    var games, teamGamesCounter, teamGame, ugwCounter;
+
+    games = [];
+
+    // loop over these games to add watched information
+    for (teamGamesCounter = 0; teamGamesCounter < teamGames.length; teamGamesCounter++) {
+        teamGame = teamGames[teamGamesCounter].toObject();
+
+        for (ugwCounter = 0; ugwCounter < userGamesWatched.length; ugwCounter++) {
+            if (userGamesWatched[ugwCounter].game.toJSON() == teamGame._id.toJSON()) {
+                teamGame.notes = userGamesWatched[ugwCounter].notes;
+                teamGame.completed = userGamesWatched[ugwCounter].completed;
+                break;
+            }
+        }
+
+        // set the game state based off if viewed or current time
+        if (teamGame.completed) {
+            teamGame.gameState = "archived";
+        } else {
+            // if we haven't, is it available to watch?
+            if (currentTime > teamGame.availableGameTime) {
+                teamGame.gameState = "available";
+            } else {
+                teamGame.gameState = "future";
+            }
+        }
+
+        // add the game to our user's game
+        games.push(teamGame);
+    }
+
+    return games;
 }
 
 function getGamesWatched(user, sport) {
@@ -174,7 +187,7 @@ function getGamesWatched(user, sport) {
     return gamesWatched;
 }
 
-function organizeGames(games, callback) {
+function organizeGames(games) {
     var availableGames, archivedGames, futureGames, i, game;
 
     // now that we've got all the games, sort them
@@ -215,11 +228,11 @@ function organizeGames(games, callback) {
     // that the user sees the latest archived.
     archivedGames.reverse();
 
-    callback({
+    return {
         availableGames: availableGames,
         archivedGames: archivedGames,
         futureGames: futureGames
-    });
+    };
 }
 
 function updateWatchedGameForUser(userId, watchedGame, callback) {
