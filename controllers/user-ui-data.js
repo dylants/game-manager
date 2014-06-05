@@ -10,12 +10,15 @@ module.exports = function(app) {
         app.get("/user-ui-data", function(req, res) {
             // first find the user based on the ID
             User.findById(req.user.id, function(err, user) {
-                var userData, teams, count;
+                var userData, currentTime, teams, count;
 
                 userData = {};
                 userData.teams = user.teams;
                 // stores all the games for this user
                 userData.games = [];
+
+                // current time is used to calculate the game state
+                currentTime = new Date();
 
                 // iterate over each team to find the games
                 teams = user.teams;
@@ -30,7 +33,7 @@ module.exports = function(app) {
                         team = teams[count];
                         count++;
 
-                        addGamesForTeam(team, user, function(err, gamesForTeam) {
+                        addGamesForTeam(team, user, currentTime, function(err, gamesForTeam) {
                             if (err) {
                                 whilstCallback(err);
                             } else {
@@ -94,13 +97,13 @@ module.exports = function(app) {
     });
 };
 
-function addGamesForTeam(team, user, callback) {
+function addGamesForTeam(team, user, currentTime, callback) {
     // find the matching team object, populating it's schedule of games
     Team.findOne({
         sport: team.sport,
         name: team.team
     }).populate("schedule").exec(function(err, team) {
-        var games, teamGames, currentTime, teamGamesCounter, teamGame,
+        var games, teamGames, teamGamesCounter, teamGame,
             userGamesWatched, i;
 
         if (err) {
@@ -113,15 +116,13 @@ function addGamesForTeam(team, user, callback) {
         // get the games for the team
         teamGames = team.schedule.toObject();
 
-        // current time is used to calculate the game state
-        currentTime = new Date();
+        // if the game has been viewed, update it
+        userGamesWatched = getGamesWatched(user, team.sport);
 
         // loop over these games to optionally add watched information
         for (teamGamesCounter = 0; teamGamesCounter < teamGames.length; teamGamesCounter++) {
             teamGame = teamGames[teamGamesCounter].toObject();
 
-            // if the game has been viewed, update it
-            userGamesWatched = getGamesWatched(user, team.sport);
             for (i = 0; i < userGamesWatched.length; i++) {
                 if (userGamesWatched[i].game.toJSON() == teamGame._id.toJSON()) {
                     teamGame.notes = userGamesWatched[i].notes;
