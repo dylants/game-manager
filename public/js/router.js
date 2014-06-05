@@ -104,7 +104,7 @@ define([
                 this.currentView.close();
             }
 
-            userModel = new UserUiDataModel([], this.sessionModel.get("_id"));
+            userModel = new UserUiDataModel();
             this.currentView = new GamesView({
                 model: userModel
             });
@@ -119,7 +119,7 @@ define([
             }
 
             teamsModel = new TeamsUIModel();
-            userModel = new UserUiDataModel([], this.sessionModel.get("_id"));
+            userModel = new UserUiDataModel();
             this.currentView = new TeamsView({
                 model: teamsModel,
                 userModel: userModel

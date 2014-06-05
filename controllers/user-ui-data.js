@@ -7,9 +7,9 @@ var async = require("async"),
 module.exports = function(app) {
     app.namespace("/api", function() {
 
-        app.get("/user-ui-data/:id", function(req, res) {
+        app.get("/user-ui-data", function(req, res) {
             // first find the user based on the ID
-            User.findById(req.params.id, function(err, user) {
+            User.findById(req.user.id, function(err, user) {
                 var userData, teams, count;
 
                 userData = {};
@@ -59,9 +59,9 @@ module.exports = function(app) {
         });
 
         // PATCH to update our User with the View Model data
-        app.patch("/user-ui-data/:id", function(req, res) {
+        app.patch("/user-ui-data", function(req, res) {
             if (req.body.game) {
-                updateWatchedGameForUser(req.params.id, req.body.game, function(err) {
+                updateWatchedGameForUser(req.user.id, req.body.game, function(err) {
                     if (err) {
                         console.error(err);
                         res.send(500, {
@@ -73,7 +73,7 @@ module.exports = function(app) {
                     res.send(200);
                 });
             } else if (req.body.teams) {
-                updateTeamsForUser(req.params.id, req.body.teams, app, function(err) {
+                updateTeamsForUser(req.user.id, req.body.teams, app, function(err) {
                     if (err) {
                         console.error(err);
                         res.send(500, {
