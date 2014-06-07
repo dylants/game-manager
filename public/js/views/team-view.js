@@ -1,11 +1,11 @@
-/* global define:true */
+"use strict";
+
 define([
     "backbone",
     "underscore",
+    "jquery",
     "text!../templates/team.html"
-], function(Backbone, _, teamHtml) {
-    "use strict";
-
+], function(Backbone, _, $, teamHtml) {
     return Backbone.View.extend({
 
         tagName: "span",

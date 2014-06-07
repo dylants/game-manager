@@ -1,0 +1,10 @@
+{
+    "globalstrict": true,
+    "globals": {
+        "module": false,
+        "require": false,
+        "console": false,
+        "process": false,
+        "__dirname": false
+    }
+}

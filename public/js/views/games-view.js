@@ -1,4 +1,5 @@
-/* global define:true */
+"use strict";
+
 define([
     "backbone",
     "underscore",
@@ -7,8 +8,6 @@ define([
     "game-model",
     "text!../templates/games.html"
 ], function(Backbone, _, $, GameView, GameModel, gamesHtml) {
-    "use strict";
-
     return Backbone.View.extend({
 
         el: "#main",

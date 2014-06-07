@@ -1,7 +1,6 @@
-/* global module:true */
-module.exports = function(grunt) {
-    "use strict";
+"use strict";
 
+module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON("package.json"),
         jshint: {
@@ -13,7 +12,8 @@ module.exports = function(grunt) {
                     "node_modules/**",
                     "public/css/**",
                     "public/js/lib/**"
-                ]
+                ],
+                jshintrc: true
             }
         },
         requirejs: {

@@ -1,4 +1,5 @@
-/* global define:true */
+"use strict";
+
 define([
     "backbone",
     "underscore",
@@ -6,8 +7,6 @@ define([
     "team-view",
     "text!../templates/teams.html"
 ], function(Backbone, _, $, TeamView, teamsHtml) {
-    "use strict";
-
     return Backbone.View.extend({
 
         el: "#main",

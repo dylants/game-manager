@@ -1,3 +1,5 @@
+"use strict";
+
 require("express-namespace");
 require("js-yaml");
 var express = require("express"),

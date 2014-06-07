@@ -1,3 +1,5 @@
+"use strict";
+
 var teamSchedule = require("../lib/team-schedule"),
     mongoose = require("mongoose"),
     Team = mongoose.model("Team");

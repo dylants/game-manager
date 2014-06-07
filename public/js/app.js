@@ -1,3 +1,5 @@
+"use strict";
+
 /*global define:true */
 define([
     "jquery",
@@ -12,8 +14,6 @@ define([
     // our app requires bootstrap
     "bootstrap"
 ], function($, Backbone, Router) {
-    "use-strict";
-
     $(function() {
         new Router();
 

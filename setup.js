@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * This is a setup file which will setup the environment for the
  * Game Manager application. The main responsibilities of this setup

@@ -1,11 +1,11 @@
-/* global define:true */
+"use strict";
+
 define([
     "backbone",
     "underscore",
+    "jquery",
     "text!../templates/header.html"
-], function(Backbone, _, headerHtml) {
-    "use strict";
-
+], function(Backbone, _, $, headerHtml) {
     return Backbone.View.extend({
 
         el: "header",

@@ -1,3 +1,5 @@
+"use strict";
+
 var _ = require("underscore"),
     mongoose = require("mongoose"),
     Team = mongoose.model("Team");

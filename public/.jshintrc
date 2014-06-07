@@ -1,0 +1,10 @@
+{
+    "globalstrict": true,
+    "globals": {
+        "define": false,
+        "require": false,
+        "window": false,
+        "location": false,
+        "console": false
+    }
+}

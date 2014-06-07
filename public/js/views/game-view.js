@@ -1,12 +1,12 @@
-/* global define:true */
+"use strict";
+
 define([
     "backbone",
     "underscore",
+    "jquery",
     "text!../templates/game.html",
     "text!../templates/game-notes.html"
-], function(Backbone, _, gameHtml, gameNotesHtml) {
-    "use strict";
-
+], function(Backbone, _, $, gameHtml, gameNotesHtml) {
     return Backbone.View.extend({
 
         template: _.template(gameHtml),
