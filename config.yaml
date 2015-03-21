@@ -269,7 +269,7 @@ nba:
             logoHref: "/public/img/nba/teams/hawks.gif"
         -
             city: "Charlotte"
-            mascot: "Bobcats"
+            mascot: "Hornets"
             conference: "Eastern"
             division: "Southeast"
             logoHref: "/public/img/nba/teams/bobcats.gif"
