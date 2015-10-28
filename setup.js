@@ -26,6 +26,9 @@ var CREATE_USER = true;
 var USERNAME = "my_user_name";
 var PASSWORD = "my_user_password";
 
+// Resets user teams and sports watched (expects only one user to exist)
+var RESET_USER = false;
+
 ///////////////////////
 // END CONFIGURATION //
 ///////////////////////
@@ -125,7 +128,7 @@ var User = mongoose.model("User");
 
 /**
  * Creates a single user for the game-manager application
- * @param  {Function} callback Called when importing is complete, with optional error argument
+ * @param  {Function} callback Called when complete, with optional error argument
  */
 
 function createUser(callback) {
@@ -138,6 +141,30 @@ function createUser(callback) {
         callback(err);
     });
 }
+
+
+//////////////////////////////////////////
+// Code to reset user for Game Manager //
+//////////////////////////////////////////
+
+/**
+ * Resets the user `sportsWatched` and `teams`
+ * @param  {Function} callback Called when complete, with optional error argument
+ */
+
+function resetUser(callback) {
+    console.log("Reset user sportsWatched and teams...");
+    User.findOne(function(err, user) {
+        if (err) {
+            return callback(err);
+        }
+
+        user.sportsWatched = [];
+        user.teams = [];
+        return user.save(callback);
+    });
+}
+
 
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
@@ -165,6 +192,14 @@ if (CREATE_USER) {
     functions.push(
         function(parallelCallback) {
             createUser(parallelCallback);
+        }
+    );
+}
+
+if (RESET_USER) {
+    functions.push(
+        function(parallelCallback) {
+            resetUser(parallelCallback);
         }
     );
 }
